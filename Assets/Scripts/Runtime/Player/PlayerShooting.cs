@@ -2,15 +2,13 @@ using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private Bullet _bulletPrefab;
+
+    private ObjectPool<Bullet> _bulletPool;
+
+    private void Awake()
     {
-        
+        _bulletPool = new(_bulletPrefab, 30);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
