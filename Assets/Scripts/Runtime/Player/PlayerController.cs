@@ -14,14 +14,14 @@ public class PlayerController : MonoBehaviour
     {
         _playerRb = GetComponent<Rigidbody>();
     }
-    private void Update()
-    {
-        if (!_isMoved)
-        {
-            MoveToTarget(target);
-            _isMoved = true;
-        }
-    }
+    //private void Update()
+    //{
+    //    if (!_isMoved)
+    //    {
+    //        MoveToTarget(target);
+    //        _isMoved = true;
+    //    }
+    //}
     private void MoveToTarget(Transform target)
     {
         MoveToTargetAsync(target).Forget();

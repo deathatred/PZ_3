@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class PlayerInputHandler : MonoBehaviour, PlayerInput.IPlayerActions
 {
+    public static PlayerInputHandler Instance {  get; private set; }
+    public bool ShootPressed { get; private set;}
+    private void Awake()
+    {
+        InitSingleton();
+    }
     private void Start()
     {
         InputManager.EnablePlayerInputActions();
@@ -16,7 +22,22 @@ public class PlayerInputHandler : MonoBehaviour, PlayerInput.IPlayerActions
     {
         if (context.performed)
         {
-            print("shoot");
+            ShootPressed = true;
         }
+        if (context.canceled)
+        {
+            ShootPressed = false;
+        }
+    }
+    private void InitSingleton()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 }
