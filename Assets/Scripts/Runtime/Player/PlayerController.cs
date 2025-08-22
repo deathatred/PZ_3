@@ -5,12 +5,22 @@ using Cysharp.Threading.Tasks;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private Transform target;
     private Rigidbody _playerRb;
     private float _moveSpeed = 5f;
 
+    private bool _isMoved;
     private void Awake()
     {
         _playerRb = GetComponent<Rigidbody>();
+    }
+    private void Update()
+    {
+        if (!_isMoved)
+        {
+            MoveToTarget(target);
+            _isMoved = true;
+        }
     }
     private void MoveToTarget(Transform target)
     {
