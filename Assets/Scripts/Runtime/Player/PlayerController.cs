@@ -9,19 +9,18 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _playerRb;
     private float _moveSpeed = 5f;
 
-    private bool _isMoved;
+    private void OnEnable()
+    {
+        SubscribeToEvents();
+    }
     private void Awake()
     {
         _playerRb = GetComponent<Rigidbody>();
     }
-    //private void Update()
-    //{
-    //    if (!_isMoved)
-    //    {
-    //        MoveToTarget(target);
-    //        _isMoved = true;
-    //    }
-    //}
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
+    }
     private void MoveToTarget(Transform target)
     {
         MoveToTargetAsync(target).Forget();
@@ -51,5 +50,14 @@ public class PlayerController : MonoBehaviour
             await UniTask.NextFrame();
         }
     }
- 
+
+    private void SubscribeToEvents()
+    {
+        GameEventBus.OnLevelLoaded += MoveToTarget;
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        GameEventBus.OnLevelLoaded -= MoveToTarget;
+    }
 }

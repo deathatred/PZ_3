@@ -20,6 +20,7 @@ public class PlayerShooting : MonoBehaviour
     private void SpawnBullet()
     {
         Bullet bullet = _bulletPool.Get();
+        bullet.Init(_bulletPool);
         bullet.transform.position = transform.position;
         bullet.transform.rotation = transform.rotation;
         bullet.gameObject.SetActive(true);

@@ -1,7 +1,8 @@
 public enum GameState
 {
     Started,
-    Moving,
+    MovingToNextPoint,
+    SpawningTargets,
     Shooting,
     Paused,
     Finished
