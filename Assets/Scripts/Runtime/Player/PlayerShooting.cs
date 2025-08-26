@@ -31,7 +31,8 @@ public class PlayerShooting : MonoBehaviour
         {
             _shootTimer -= Time.deltaTime;
         }
-        if (PlayerInputHandler.Instance.ShootPressed && _shootTimer <= 0)
+        if (PlayerInputHandler.Instance.ShootPressed && _shootTimer <= 0 && 
+            GameManager.Instance.CurrentGameState is ShootingState)
         {
             SpawnBullet();
             _shootTimer = _shootTimerMax;

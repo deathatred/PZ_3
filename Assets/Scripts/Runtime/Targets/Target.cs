@@ -7,8 +7,7 @@ public class Target : MonoBehaviour, IDamageable
     [SerializeField] private ColorsSO _colorsSO;
 
     private MeshRenderer _renderer;
-    private int _health = 2;
-    public static event Action OnTargetDestroyed;
+    private int _health = 1;
     private void OnEnable()
     {
         _renderer = GetComponent<MeshRenderer>();

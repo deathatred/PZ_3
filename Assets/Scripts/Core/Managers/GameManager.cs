@@ -4,14 +4,15 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Level _currentLevel;
-
     public static GameManager Instance { get; private set; }
-    public GameState CurrentGameState { get; private set; }
+    public int MovePointIndex { get; private set; } = 0;
+    public int TargetSpawnPointIndex { get; private set; } = 0;
+    public Level CurrentLevel => _currentLevel;
 
+    public IGameState CurrentGameState { get; private set; }
     private LevelFlowSO _currentLevelFlowSO;
     private int _currentLevelProgress = 0;
-    private int _currentMovePointIndex = 0;
-    private int _currentTargetSpawnPointIndex = 0;
+   
     private Transform _player;
 
     private void OnEnable()
@@ -21,48 +22,45 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         InitSingleton();
-        ChangeCurrentGameState(GameState.Started);
 
         _player = GameObject.FindGameObjectWithTag("Player").transform;
     }
     private void Start()
     {
-        ChangeCurrentGameState(GameState.Started);
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-    }
-    private void Update()
-    {
-
+        _currentLevel.SetPlayer(_player);
+        ChangeCurrentGameState(GameState.Started);
     }
     private void OnDisable()
     {
         UnsubscribeFromEvents();
     }
-    private void ChangeCurrentGameState(GameState state)
+    public void ChangeCurrentGameState(GameState newState)
     {
-        CurrentGameState = state;
-        switch (CurrentGameState)
-        {
-            case GameState.Started:
-                GameEventBus.LevelLoaded();
-                break;
-            case GameState.MovingToNextPoint:
-                GameEventBus.SetNewMovingPoint(_currentLevel.GetMoveTarget(_currentMovePointIndex));
-                _currentMovePointIndex++;
-                break;
-            case GameState.SpawningTargets:
-                GameEventBus.SpawnTargets(_currentLevel.GetTargetSpawnPoint(_currentTargetSpawnPointIndex));
-                _currentTargetSpawnPointIndex++;
-                break;
-            case GameState.Shooting:
-
-                break;
-            case GameState.Paused:
-                break;
-            case GameState.Finished:
-                break;
-        }
+        CurrentGameState?.Exit();
+        CurrentGameState = StateFactory.Create(newState);
+        CurrentGameState.Enter(this);
+    }
+    public void NextState()
+    {
         _currentLevelProgress++;
+        ChangeCurrentGameState(_currentLevelFlowSO.GameStateList[_currentLevelProgress]);
+    }
+    public void AddMovePointIndex()
+    {
+        MovePointIndex++;
+    }
+    public void AddTargetSpawnPointIndex()
+    {
+        TargetSpawnPointIndex++;
+    }
+    public bool IsTargetSpawnPointLast()
+    {
+        if (TargetSpawnPointIndex == _currentLevel.GetTargetSpawnPointsCount()-1)
+        {
+            return true;
+        }
+        return false;
     }
     private void InitSingleton()
     {
@@ -77,17 +75,19 @@ public class GameManager : MonoBehaviour
     }
     private void SubscribeToEvents()
     {
-        //OnLevelLoaded
-        //OnFinishedMoving
-        //Every action that changes state must be an event to trigger state change
-        GameEventBus.OnAllTargetsDestroyed += GameEventBusOnAllTargetsDestroyed;
+        GameEventBus.OnAllTargetsDestroyed += GameEventBusGameNextState;
+        GameEventBus.OnFinishedMoving += GameEventBusGameNextState;
+        GameEventBus.OnFinishedSpawning += GameEventBusGameNextState;
     }
     private void UnsubscribeFromEvents()
     {
-        GameEventBus.OnAllTargetsDestroyed -= GameEventBusOnAllTargetsDestroyed;
+        GameEventBus.OnAllTargetsDestroyed -= GameEventBusGameNextState;
+        GameEventBus.OnFinishedMoving -= GameEventBusGameNextState;
+        GameEventBus.OnFinishedSpawning -= GameEventBusGameNextState;
     }
-    private void GameEventBusOnAllTargetsDestroyed()
+    private void GameEventBusGameNextState()
     {
-        ChangeCurrentGameState(_currentLevelFlowSO.GameStateList[_currentLevelProgress]);
+        NextState();
     }
+
 }

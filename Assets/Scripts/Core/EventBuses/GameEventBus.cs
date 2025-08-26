@@ -4,11 +4,13 @@ using UnityEngine;
 public static class GameEventBus 
 {
     public static event Action<Transform> OnTargetDestroyed;
-    public static event Action<Transform> OnSpawningTargets;
+    public static event Action<int, bool> OnSpawningTargets;
     public static event Action<Transform> OnNewMovingPoint;
 
     public static event Action OnLevelLoaded;
     public static event Action OnAllTargetsDestroyed;
+    public static event Action OnFinishedMoving;
+    public static event Action OnFinishedSpawning;
     public static event Action OnShoot;
 
     public static void Shoot()
@@ -23,9 +25,9 @@ public static class GameEventBus
     {
         OnLevelLoaded?.Invoke();
     }
-    public static void SpawnTargets(Transform targetSpawnPos)
+    public static void SpawnTargets(int targetSpawnPosIndex, bool isLast)
     {
-        OnSpawningTargets?.Invoke(targetSpawnPos);
+        OnSpawningTargets?.Invoke(targetSpawnPosIndex, isLast);
     }
     public static void SetNewMovingPoint(Transform movingPoint)
     {
@@ -34,5 +36,13 @@ public static class GameEventBus
     public static void AllTargetsDestroyed()
     {
         OnAllTargetsDestroyed?.Invoke();
+    }
+    public static void FinishedMoving()
+    {
+        OnFinishedMoving?.Invoke();
+    }
+    public static void FinishedSpawning()
+    {
+        OnFinishedSpawning?.Invoke();
     }
 }

@@ -5,7 +5,6 @@ using Cysharp.Threading.Tasks;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Transform target;
     private Rigidbody _playerRb;
     private float _moveSpeed = 5f;
 
@@ -29,13 +28,15 @@ public class PlayerController : MonoBehaviour
     {
         await RotateToTarget(target);
 
-        Vector3 direction = (target.position - transform.position).normalized;
+       
         while (Vector3.Distance(transform.position, target.position) > 0.6f)
         {
+            Vector3 direction = (target.position - transform.position).normalized;
             _playerRb.linearVelocity = direction * _moveSpeed;
             await UniTask.WaitForFixedUpdate();
         }
         _playerRb.linearVelocity = Vector3.zero;
+        GameEventBus.FinishedMoving();
     }
     private async UniTask RotateToTarget(Transform target)
     {
@@ -53,11 +54,14 @@ public class PlayerController : MonoBehaviour
 
     private void SubscribeToEvents()
     {
-        GameEventBus.OnLevelLoaded += MoveToTarget;
+        GameEventBus.OnNewMovingPoint += GameEventBusOnNewMovingPoint;
     }
-
     private void UnsubscribeFromEvents()
     {
-        GameEventBus.OnLevelLoaded -= MoveToTarget;
+        GameEventBus.OnNewMovingPoint -= GameEventBusOnNewMovingPoint;
+    }
+    private void GameEventBusOnNewMovingPoint(Transform obj)
+    {
+        MoveToTarget(obj);
     }
 }
