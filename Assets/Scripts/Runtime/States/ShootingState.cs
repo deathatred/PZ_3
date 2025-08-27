@@ -9,6 +9,7 @@ public class ShootingState : IGameState
 
     public void Exit()
     {
+        GameEventBus.ShootingEnded();
         Debug.Log("Exited Shooting State");
     }
 }

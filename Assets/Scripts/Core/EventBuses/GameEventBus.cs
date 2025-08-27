@@ -1,18 +1,25 @@
 using System;
 using UnityEngine;
 
-public static class GameEventBus 
+public static class GameEventBus
 {
+    #region Game Events
     public static event Action<Transform> OnTargetDestroyed;
     public static event Action<int, bool> OnSpawningTargets;
     public static event Action<Transform> OnNewMovingPoint;
-
     public static event Action OnLevelLoaded;
     public static event Action OnAllTargetsDestroyed;
     public static event Action OnFinishedMoving;
     public static event Action OnFinishedSpawning;
+    public static event Action OnShootingEnded;
     public static event Action OnShoot;
+    #endregion
+    #region UI Events
+    public static event Action OnSettingsClicked;
+    public static event Action OnMenuClicked;
+    #endregion
 
+    #region Game Event Invokes
     public static void Shoot()
     {
         OnShoot?.Invoke();
@@ -45,4 +52,19 @@ public static class GameEventBus
     {
         OnFinishedSpawning?.Invoke();
     }
+    public static void ShootingEnded()
+    {
+        OnShootingEnded?.Invoke();
+    }
+    #endregion
+    #region UI Event Invokes
+    public static void MenuClicked()
+    {
+        OnMenuClicked?.Invoke();
+    }
+    public static void SettingsClicked()
+    {
+        OnSettingsClicked?.Invoke();
+    }
+    #endregion
 }

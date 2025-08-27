@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Level _currentLevel;
+    [SerializeField] private List<Level> _levelsList;
     public static GameManager Instance { get; private set; }
     public int MovePointIndex { get; private set; } = 0;
     public int TargetSpawnPointIndex { get; private set; } = 0;
+    public int CurrentLevelIndex { get; private set; } = 0;
+    private Level _currentLevel;
     public Level CurrentLevel => _currentLevel;
 
     public IGameState CurrentGameState { get; private set; }
@@ -21,6 +24,7 @@ public class GameManager : MonoBehaviour
     }
     private void Awake()
     {
+        _currentLevel = _levelsList[CurrentLevelIndex];
         InitSingleton();
 
         _player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -78,12 +82,21 @@ public class GameManager : MonoBehaviour
         GameEventBus.OnAllTargetsDestroyed += GameEventBusGameNextState;
         GameEventBus.OnFinishedMoving += GameEventBusGameNextState;
         GameEventBus.OnFinishedSpawning += GameEventBusGameNextState;
+        GameEventBus.OnShootingEnded += GameEventBusOnShootingEnded;
     }
+
+    private void GameEventBusOnShootingEnded()
+    {
+        int listOffset = 1;
+        _currentLevel.DestroyObstacles(TargetSpawnPointIndex- listOffset);
+    }
+
     private void UnsubscribeFromEvents()
     {
         GameEventBus.OnAllTargetsDestroyed -= GameEventBusGameNextState;
         GameEventBus.OnFinishedMoving -= GameEventBusGameNextState;
         GameEventBus.OnFinishedSpawning -= GameEventBusGameNextState;
+        GameEventBus.OnShootingEnded -= GameEventBusOnShootingEnded;
     }
     private void GameEventBusGameNextState()
     {

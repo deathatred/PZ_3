@@ -7,13 +7,9 @@ public class Target : MonoBehaviour, IDamageable
     [SerializeField] private ColorsSO _colorsSO;
     [SerializeField] private ParticleSystem _particles;
 
-    private MeshRenderer _renderer;
-    private Color mainColor;
+   
+    private Color _mainColor;
     private int _health = 1;
-    private void OnEnable()
-    {
-        Init();
-    }
     public void TakeDamage(int amount)
     {
         if (_health > 0)
@@ -31,17 +27,14 @@ public class Target : MonoBehaviour, IDamageable
             _particles.transform.rotation = worldRot;
             _particles.transform.localScale = Vector3.one;
             var main = _particles.main;
-            main.startColor = mainColor;
+            main.startColor = _mainColor;
             _particles.Play();
        
             Destroy(gameObject);
         }
     }
-    private void Init()
+    public void SetMainColor(Color color)
     {
-        _renderer = GetComponent<MeshRenderer>();
-        List<Color> _colorsList = _colorsSO.ColorsList;
-        mainColor = _colorsList[UnityEngine.Random.Range(0, _colorsList.Count)];
-        _renderer.material.color = mainColor;
+        _mainColor = color;
     }
 }

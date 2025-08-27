@@ -2,18 +2,19 @@ using UnityEngine;
 
 public class MovingObstacleHorizontal : MovingObstacle
 {
-    private Vector3 _startPos;
-    private float _distance = 5f;
     [SerializeField] private float _frequency = 0.2f;
+    [SerializeField] private float _distance = 5f;
+
+    private Vector3 _localStartPos;
 
     private void OnEnable()
     {
-        _startPos = transform.position;
+        _localStartPos = transform.localPosition;
     }
+
     protected override void Move()
     {
-        float xOffset = Mathf.Sin(Time.time * _frequency * 2 * Mathf.PI) * _distance;
-        transform.position = _startPos + Vector3.forward * xOffset;
-
+        float offset = Mathf.Sin(Time.time * _frequency * 2 * Mathf.PI) * _distance;
+        transform.localPosition = _localStartPos + Vector3.forward * offset;
     }
 }

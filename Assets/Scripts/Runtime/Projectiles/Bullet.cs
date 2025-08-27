@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private float _flySpeed = 5f;
+    private float _flySpeed = 15f;
     private ObjectPool<Bullet> _bulletPool;
     private float _lifeTime = 5f;
     private float _lifeTimer;
