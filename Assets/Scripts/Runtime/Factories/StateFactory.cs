@@ -11,7 +11,9 @@ public static class StateFactory
             GameState.SpawningTargets => new SpawningTargetsState(),
             GameState.Shooting => new ShootingState(),
             GameState.Finished => new FinishedState(),
-            GameState.Paused => new FinishedState() //Paused
+            GameState.Paused => new FinishedState(),
+            GameState.Menu => new MenuState(),
+            _ => throw new System.NotImplementedException()
         };
 
     }

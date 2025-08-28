@@ -17,6 +17,9 @@ public static class GameEventBus
     #region UI Events
     public static event Action OnSettingsClicked;
     public static event Action OnMenuClicked;
+    public static event Action OnPlayClicked;
+    public static event Action OnBackClicked;
+    public static event Action OnLevelsClicked;
     #endregion
 
     #region Game Event Invokes
@@ -65,6 +68,18 @@ public static class GameEventBus
     public static void SettingsClicked()
     {
         OnSettingsClicked?.Invoke();
+    }
+    public static void PlayClicked()
+    {
+        OnPlayClicked?.Invoke();
+    }
+    public static void LevelsClicked()
+    {
+        OnLevelsClicked?.Invoke();
+    }
+    public static void BackClicked()
+    {
+        OnBackClicked?.Invoke();
     }
     #endregion
 }

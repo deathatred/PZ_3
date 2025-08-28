@@ -8,7 +8,6 @@ public class GameViewUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _levelText;
     [SerializeField] private Button _menuButton;
 
-    private int levelIndexOffset = 1;
     private void OnEnable()
     {
         SubscribeToEvents();
@@ -40,6 +39,6 @@ public class GameViewUI : MonoBehaviour
     }
     private void SetLevelText(int levelIndex)
     {
-        _levelText.text = $"Level: {levelIndex + levelIndexOffset}";
+        _levelText.text = $"Level: {levelIndex}";
     }
 }

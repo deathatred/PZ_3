@@ -1,5 +1,6 @@
 using Cysharp.Threading;
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class Level : MonoBehaviour
     [SerializeField] private List<Transform> _movePoint = new List<Transform>();
     [SerializeField] private List<Transform> _targetSpawnPoints = new List<Transform>();
     [SerializeField] private List<Transform> _obstacleSets = new List<Transform>();
+    [SerializeField] private InfoLevelSO _infoLevelSO;
     [SerializeField] private ColorsSO _colorScheme;
     [SerializeField] private Transform _targetPrefab;
     [SerializeField] private Transform _chestPrefab;
@@ -17,10 +19,15 @@ public class Level : MonoBehaviour
     private Transform _player;
     private List<Transform> _targets = new List<Transform>();
     private int _targetsAmount = 10;
+    private CancellationTokenSource _targetCts;
 
     private void OnEnable()
     {
         SubscribeToEvents();
+    }
+    private void Start()
+    {
+        _targetCts = new CancellationTokenSource();
     }
     private void OnDisable()
     {
@@ -28,6 +35,8 @@ public class Level : MonoBehaviour
     }
     private async void SpawnTargets(int index, bool last = false)
     {
+        var token = _targetCts.Token;
+
         Vector3 spawnBasePos = _targetSpawnPoints[index].position;
         float baseOffset = 0.5f;
         float offsetStep = 1f;
@@ -39,11 +48,20 @@ public class Level : MonoBehaviour
             Transform chest = SpawnChest(_targetSpawnPoints[index].transform, new Vector3(_player.position.x, spawnBasePos.y, _player.position.z));
             spawnedTargets.Add(chest);
             _targets.Add(chest);
-            await AnimateTargetRise(chest, baseOffset, 0.3f);
-            await UniTask.Delay(System.TimeSpan.FromSeconds(delayAfterChest));
+            await AnimateTargetRise(chest, baseOffset, 0.3f, token);
+            try
+            {
+                await UniTask.Delay(System.TimeSpan.FromSeconds(delayBetweenTargets), cancellationToken: token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
         }
         for (int i = 0; i < _targetsAmount; i++)
         {
+            token.ThrowIfCancellationRequested();
+
             Vector3 spawnPos = new Vector3(spawnBasePos.x, spawnBasePos.y - 1.5f, spawnBasePos.z);
             Transform target = Instantiate(_targetPrefab, spawnPos, Quaternion.identity);
             spawnedTargets.Add(target);
@@ -58,15 +76,22 @@ public class Level : MonoBehaviour
             for (int j = 0; j < spawnedTargets.Count; j++)
             {
                 float targetHeight = baseOffset + (spawnedTargets.Count - j - 1) * offsetStep;
-                riseTasks.Add(AnimateTargetRise(spawnedTargets[j], targetHeight, 0.1f));
+                riseTasks.Add(AnimateTargetRise(spawnedTargets[j], targetHeight, 0.1f, token));
             }
 
             await UniTask.WhenAll(riseTasks);
-            await UniTask.Delay(System.TimeSpan.FromSeconds(delayBetweenTargets));
+            try
+            {
+                await UniTask.Delay(System.TimeSpan.FromSeconds(delayBetweenTargets), cancellationToken: token);
+            }
+            catch (OperationCanceledException)
+            {
+                return; 
+            }
         }    
         GameEventBus.FinishedSpawning();
     }
-    private async UniTask AnimateTargetRise(Transform target, float finalY, float duration)
+    private async UniTask AnimateTargetRise(Transform target, float finalY, float duration, CancellationToken token)
     {
         Vector3 startPos = target.position;
         Vector3 endPos = new Vector3(startPos.x, finalY, startPos.z);
@@ -74,6 +99,8 @@ public class Level : MonoBehaviour
 
         while (time < duration)
         {
+            token.ThrowIfCancellationRequested();
+
             time += Time.deltaTime;
             float t = Mathf.Clamp01(time / duration);
             target.position = Vector3.Lerp(startPos, endPos, t);
@@ -193,5 +220,24 @@ public class Level : MonoBehaviour
     public int GetTargetSpawnPointsCount()
     {
         return _targetSpawnPoints.Count;
+    }
+    public InfoLevelSO GetLevelInfoSO()
+    {
+        return _infoLevelSO;
+    }
+    public void ResetLevel()
+    {
+        _targetCts.Cancel();
+        _targetCts = new CancellationTokenSource();
+        foreach (var target in _targets)
+        {
+            if (target != null)
+                GameObject.Destroy(target.gameObject);
+        }
+        _targets.Clear();
+        foreach (var obstacle in  _obstacleSets)
+        {
+            obstacle.gameObject.SetActive(true);
+        }
     }
 }

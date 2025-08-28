@@ -5,5 +5,6 @@ public enum GameState
     SpawningTargets,
     Shooting,
     Paused,
-    Finished
+    Finished,
+    Menu
 }

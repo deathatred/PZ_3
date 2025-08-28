@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public IGameState CurrentGameState { get; private set; }
     private LevelFlowSO _currentLevelFlowSO;
     private int _currentLevelProgress = 0;
-   
+    private Vector3 _playerDefaultSpawnPoint = new Vector3(0f, 0.6f, 0f);   
     private Transform _player;
 
     private void OnEnable()
@@ -24,16 +24,14 @@ public class GameManager : MonoBehaviour
     }
     private void Awake()
     {
-        _currentLevel = _levelsList[CurrentLevelIndex];
         InitSingleton();
-
+        _currentLevel = _levelsList[CurrentLevelIndex];
         _player = GameObject.FindGameObjectWithTag("Player").transform;
     }
     private void Start()
     {
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
         _currentLevel.SetPlayer(_player);
-        ChangeCurrentGameState(GameState.Started);
     }
     private void OnDisable()
     {
@@ -83,12 +81,8 @@ public class GameManager : MonoBehaviour
         GameEventBus.OnFinishedMoving += GameEventBusGameNextState;
         GameEventBus.OnFinishedSpawning += GameEventBusGameNextState;
         GameEventBus.OnShootingEnded += GameEventBusOnShootingEnded;
-    }
-
-    private void GameEventBusOnShootingEnded()
-    {
-        int listOffset = 1;
-        _currentLevel.DestroyObstacles(TargetSpawnPointIndex- listOffset);
+        GameEventBus.OnPlayClicked += GameEventBusOnPlayClicked;
+        GameEventBus.OnMenuClicked += GameEventBusOnMenuClicked;
     }
 
     private void UnsubscribeFromEvents()
@@ -97,10 +91,45 @@ public class GameManager : MonoBehaviour
         GameEventBus.OnFinishedMoving -= GameEventBusGameNextState;
         GameEventBus.OnFinishedSpawning -= GameEventBusGameNextState;
         GameEventBus.OnShootingEnded -= GameEventBusOnShootingEnded;
+        GameEventBus.OnPlayClicked -= GameEventBusOnPlayClicked;
+        GameEventBus.OnMenuClicked -= GameEventBusOnMenuClicked;
+    }
+    private void GameEventBusOnMenuClicked()
+    {
+        ResetLevel();
+    }
+    private void GameEventBusOnPlayClicked()
+    {
+        ChangeCurrentGameState(GameState.Started);
+    }
+
+    private void GameEventBusOnShootingEnded()
+    {
+        int listOffset = 1;
+        print(TargetSpawnPointIndex - listOffset);
+        if ((TargetSpawnPointIndex - listOffset) >= 0)
+        {
+            _currentLevel.DestroyObstacles(TargetSpawnPointIndex - listOffset);
+        }
     }
     private void GameEventBusGameNextState()
     {
         NextState();
     }
-
+    public List<Level> GetLevelsList()
+    {
+        return _levelsList;
+    }
+    private void ResetLevel()
+    {
+        MovePointIndex = 0;
+        TargetSpawnPointIndex = 0;
+        _currentLevelProgress = 0;
+        _currentLevel = _levelsList[CurrentLevelIndex];
+        _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
+        _player.position = _playerDefaultSpawnPoint;
+        _player.rotation = Quaternion.Euler(0f, 90f, 0f);
+        _currentLevel.ResetLevel();
+        ChangeCurrentGameState(GameState.Menu);
+    }
 }

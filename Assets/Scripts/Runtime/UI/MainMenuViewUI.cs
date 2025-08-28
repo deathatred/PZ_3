@@ -7,4 +7,37 @@ public class MainMenuView : MonoBehaviour
     [SerializeField] private Button _playButton;
     [SerializeField] private Button _levelsButton;
     [SerializeField] private Button _settingsButton;
+
+    private void OnEnable()
+    {
+        SubscribeToEvents();
+    }
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
+    }
+    private void SubscribeToEvents()
+    {
+        _playButton.onClick.AddListener(PlayClicked);
+        _levelsButton.onClick.AddListener(LevelsClicked);
+        _settingsButton.onClick.AddListener(SettingsClicked);
+    }
+    private void UnsubscribeFromEvents()
+    {
+        _playButton.onClick.RemoveListener(PlayClicked);
+        _levelsButton.onClick.RemoveListener(LevelsClicked);
+        _settingsButton.onClick.RemoveListener(SettingsClicked);
+    }
+    private void PlayClicked()
+    {
+        GameEventBus.PlayClicked();
+    }
+    private void LevelsClicked()
+    {
+        GameEventBus.LevelsClicked();
+    }
+    private void SettingsClicked()
+    {
+        GameEventBus.SettingsClicked();
+    }
 }

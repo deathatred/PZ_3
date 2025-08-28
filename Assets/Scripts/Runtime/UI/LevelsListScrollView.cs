@@ -1,16 +1,20 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelsListScrollView : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private LevelSingleCell _levelSingleCellPrefab;
+    [SerializeField] private GameObject _content;
 
-    // Update is called once per frame
-    void Update()
+    public void Init(List<Level> levelsList)
     {
-        
+        foreach (Level level in levelsList)
+        {
+            InfoLevelSO levelInfoSO = level.GetLevelInfoSO();
+            LevelSingleCell levelSingleCell = 
+                GameObject.Instantiate(_levelSingleCellPrefab, _content.transform);
+            levelSingleCell.Init(levelInfoSO);
+        }
     }
 }
