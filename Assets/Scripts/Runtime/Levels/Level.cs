@@ -143,6 +143,20 @@ public class Level : MonoBehaviour
     }
     private void TargetDestroyed(Transform target)
     {
+        if (target.CompareTag("Chest"))
+        {
+            if (_targets.Count == 1)
+            {
+                _targets.Remove(target);
+                print("all target destroyed (chest)");
+                GameEventBus.AllTargetsDestroyed();
+            }
+            else
+            {
+                _targets.Remove(target);
+            }
+            return;
+        }
         if (_targets.Remove(target))
         {
             LowerAllTargets().Forget();

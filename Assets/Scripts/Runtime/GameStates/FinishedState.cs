@@ -9,7 +9,7 @@ public class FinishedState : IGameState
     {
         _manager = manager;
         Debug.Log("Entered Finished State");
-
+        GameEventBus.LevelFinished();
     }
 
     public void Exit()

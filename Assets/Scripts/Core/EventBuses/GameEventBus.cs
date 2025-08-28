@@ -13,6 +13,7 @@ public static class GameEventBus
     public static event Action OnFinishedSpawning;
     public static event Action OnShootingEnded;
     public static event Action OnShoot;
+    public static event Action OnLevelFinished;
     #endregion
     #region UI Events
     public static event Action OnSettingsClicked;
@@ -20,6 +21,7 @@ public static class GameEventBus
     public static event Action OnPlayClicked;
     public static event Action OnBackClicked;
     public static event Action OnLevelsClicked;
+
     #endregion
 
     #region Game Event Invokes
@@ -58,6 +60,10 @@ public static class GameEventBus
     public static void ShootingEnded()
     {
         OnShootingEnded?.Invoke();
+    }
+    public static void LevelFinished()
+    {
+        OnLevelFinished?.Invoke();
     }
     #endregion
     #region UI Event Invokes
