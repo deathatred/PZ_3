@@ -69,7 +69,7 @@ public class ViewManager : MonoBehaviour
     {
         ChangeCanvas(0);
     }
-    private void GameEventBusOnLevelFinished()
+    private void GameEventBusOnLevelFinished(Stars stars)
     {
         ChangeCanvas(4);
     }

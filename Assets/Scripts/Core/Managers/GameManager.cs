@@ -8,7 +8,12 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public int MovePointIndex { get; private set; } = 0;
     public int TargetSpawnPointIndex { get; private set; } = 0;
-    public int CurrentLevelIndex { get; private set; } = 0;
+    public int CurrentLevelIndex
+    {
+        get { return _currentLevelIndex + 1; }
+        private set { _currentLevelIndex = value; }
+    }
+    private int _currentLevelIndex = 0;
     private Level _currentLevel;
     public Level CurrentLevel => _currentLevel;
 
@@ -25,7 +30,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         InitSingleton();
-        _currentLevel = _levelsList[CurrentLevelIndex];
+        _currentLevel = _levelsList[_currentLevelIndex];
         _player = GameObject.FindGameObjectWithTag("Player").transform;
     }
     private void Start()
@@ -125,11 +130,16 @@ public class GameManager : MonoBehaviour
         MovePointIndex = 0;
         TargetSpawnPointIndex = 0;
         _currentLevelProgress = 0;
-        _currentLevel = _levelsList[CurrentLevelIndex];
+        _currentLevel = _levelsList[_currentLevelIndex];
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
         _player.position = _playerDefaultSpawnPoint;
         _player.rotation = Quaternion.Euler(0f, 90f, 0f);
         _currentLevel.ResetLevel();
         ChangeCurrentGameState(GameState.Menu);
+    }
+    public int GetRemainingBullets()
+    {
+        var playerShooting = _player.GetComponent<PlayerShooting>();
+        return playerShooting.GetBullets();
     }
 }

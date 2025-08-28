@@ -15,3 +15,6 @@ MonoBehaviour:
   LevelNumber: 1
   LevelPreview: {fileID: 21300000, guid: 143fea21cac61424dae6bed2fb932c6e, type: 3}
   StarsGained: 0
+  NumberOfBullets: 40
+  BulletsForThreeStars: 15
+  BulletsForTwoStars: 10

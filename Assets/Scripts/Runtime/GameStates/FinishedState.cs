@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 using Debug = UnityEngine.Debug;
 
 public class FinishedState : IGameState
@@ -9,11 +10,44 @@ public class FinishedState : IGameState
     {
         _manager = manager;
         Debug.Log("Entered Finished State");
-        GameEventBus.LevelFinished();
+        Stars stars = CountStars();
+        FinishTheLevelAfterDelay(stars).Forget();
     }
 
     public void Exit()
     {
         Debug.Log("Exited Finished State");
+    }
+    private Stars CountStars()
+    {
+        InfoLevelSO levelInfo = GameManager.Instance.CurrentLevel.GetLevelInfoSO();
+        int remaining = _manager.GetRemainingBullets();
+        if (remaining >= levelInfo.BulletsForThreeStars)
+        {
+            LevelsProgress.SaveStars(_manager.CurrentLevelIndex, (int)Stars.Three);
+            Debug.Log(_manager.CurrentLevelIndex + "Level index");
+            levelInfo.StarsGained = (int)Stars.Three;
+            return Stars.Three;      
+        }
+        else if (remaining >= levelInfo.BulletsForTwoStars)
+        {
+            LevelsProgress.SaveStars(_manager.CurrentLevelIndex, (int)Stars.Two);
+            Debug.Log(_manager.CurrentLevelIndex + "Level index");
+            levelInfo.StarsGained = (int)Stars.Two;
+            return Stars.Two;
+        }
+        else
+        {
+            LevelsProgress.SaveStars(_manager.CurrentLevelIndex, (int)Stars.One);
+            Debug.Log(_manager.CurrentLevelIndex + "Level index");
+            levelInfo.StarsGained = (int)Stars.One;
+            return Stars.One;
+        }
+    }
+    private async UniTask FinishTheLevelAfterDelay(Stars stars)
+    {
+        await UniTask.Delay(5000);
+      
+        GameEventBus.LevelFinished(stars);
     }
 }

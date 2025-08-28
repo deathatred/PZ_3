@@ -41,7 +41,6 @@ public class Level : MonoBehaviour
         float baseOffset = 0.5f;
         float offsetStep = 1f;
         float delayBetweenTargets = 0.1f;
-        float delayAfterChest = 1f;
         List<Transform> spawnedTargets = new List<Transform>();
         if (last)
         {
@@ -61,8 +60,8 @@ public class Level : MonoBehaviour
         for (int i = 0; i < _targetsAmount; i++)
         {
             token.ThrowIfCancellationRequested();
-
-            Vector3 spawnPos = new Vector3(spawnBasePos.x, spawnBasePos.y - 1.5f, spawnBasePos.z);
+            float yOffset = 1.5f;
+            Vector3 spawnPos = new Vector3(spawnBasePos.x, spawnBasePos.y - yOffset, spawnBasePos.z);
             Transform target = Instantiate(_targetPrefab, spawnPos, Quaternion.identity);
             spawnedTargets.Add(target);
             _targets.Add(target);
@@ -133,7 +132,6 @@ public class Level : MonoBehaviour
         );
 
         Transform chest = Instantiate(_chestPrefab, spawnPos, Quaternion.identity);
-        _targets.Add(chest);
 
         // Дивимось лише по Y, щоб не нахилялась
         Vector3 targetLookPos = new Vector3(lookAtPos.x, chest.position.y, lookAtPos.z);
@@ -143,6 +141,10 @@ public class Level : MonoBehaviour
     }
     private void TargetDestroyed(Transform target)
     {
+        foreach (var t in _targets)
+        {
+            Debug.Log(t.name);
+        }
         if (target.CompareTag("Chest"))
         {
             if (_targets.Count == 1)

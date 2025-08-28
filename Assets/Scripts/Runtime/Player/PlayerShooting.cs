@@ -4,11 +4,15 @@ using UnityEngine;
 public class PlayerShooting : MonoBehaviour
 {
     [SerializeField] private Bullet _bulletPrefab;
-
+    private int _bullets;
     private ObjectPool<Bullet> _bulletPool;
     private float _shootTimer;
     private float _shootTimerMax = 0.3f;
 
+    private void OnEnable()
+    {
+        SubscribeToEvents();
+    }
     private void Awake()
     {
         _bulletPool = new(_bulletPrefab, 30);
@@ -16,6 +20,10 @@ public class PlayerShooting : MonoBehaviour
     private void Update()
     {
         HandleShooting();
+    }
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
     }
     private void SpawnBullet()
     {
@@ -35,7 +43,26 @@ public class PlayerShooting : MonoBehaviour
             GameManager.Instance.CurrentGameState is ShootingState)
         {
             SpawnBullet();
+            _bullets -= 1;
             _shootTimer = _shootTimerMax;
         }
+    }
+    private void SubscribeToEvents()
+    {
+        GameEventBus.OnLevelLoaded += GameEventBusOnLevelLoaded;
+    }
+
+    private void GameEventBusOnLevelLoaded()
+    {
+        _bullets = GameManager.Instance.CurrentLevel.GetLevelInfoSO().NumberOfBullets;
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        GameEventBus.OnLevelLoaded -= GameEventBusOnLevelLoaded;
+    }
+    public int GetBullets()
+    {
+        return _bullets;
     }
 }

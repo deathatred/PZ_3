@@ -13,7 +13,7 @@ public class LevelsMenuViewUI : MonoBehaviour
     }
     private void Awake()
     {
-        _levelListScrollView.Init(GameManager.Instance.GetLevelsList());
+        InitComponents();
     }
     private void OnDisable()
     {
@@ -22,13 +22,19 @@ public class LevelsMenuViewUI : MonoBehaviour
     private void SubscribeToEvents()
     {
         _backButton.onClick.AddListener(BackClicked);
+        GameEventBus.OnLevelsClicked += InitComponents;
     }
     private void UnsubscribeFromEvents()
     {
         _backButton.onClick.RemoveListener(BackClicked);
+        GameEventBus.OnLevelsClicked -= InitComponents;
     }
     private void BackClicked()
     {
         GameEventBus.BackClicked();
+    }
+    private void InitComponents()
+    {
+        _levelListScrollView.Init(GameManager.Instance.GetLevelsList());
     }
 }
