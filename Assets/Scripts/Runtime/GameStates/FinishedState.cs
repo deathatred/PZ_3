@@ -10,7 +10,7 @@ public class FinishedState : IGameState
     {
         _manager = manager;
         Stars stars = CountStars();
-        FinishTheLevelAfterDelay(stars).Forget();
+        FinishTheLevelAfterDelayAsync(stars).Forget();
     }
 
     public void Exit()
@@ -39,7 +39,7 @@ public class FinishedState : IGameState
             return Stars.One;
         }
     }
-    private async UniTask FinishTheLevelAfterDelay(Stars stars)
+    private async UniTask FinishTheLevelAfterDelayAsync(Stars stars)
     {
         await UniTask.Delay(5000);
       

@@ -35,37 +35,37 @@ public class ViewManager : MonoBehaviour
     {
         GameEventBus.OnPlayClicked += GameEventBusOnPlayClicked;
         GameEventBus.OnLevelsClicked += GameEventBusOnLevelsClicked;
-        GameEventBus.OnSettingsClicked += GameEventBusOnSettingsClicked;
         GameEventBus.OnMenuClicked += GameEventBusOnMenuClicked;
         GameEventBus.OnBackClicked += GameEventBusOnBackClicked;
         GameEventBus.OnLevelFinished += GameEventBusOnLevelFinished;
-        GameEventBus.OnNextClicked += GameEventBusOnNextClicked;
+        GameEventBus.OnLevelLoaded += GameEventBus_OnLevelLoaded;
+        GameEventBus.OnNextClicked += GameEventBus_OnNextClicked;
     }
     private void UnsubscribeFromEvents()
     {
         GameEventBus.OnPlayClicked -= GameEventBusOnPlayClicked;
         GameEventBus.OnLevelsClicked -= GameEventBusOnLevelsClicked;
-        GameEventBus.OnSettingsClicked -= GameEventBusOnSettingsClicked;
         GameEventBus.OnMenuClicked -= GameEventBusOnMenuClicked;
         GameEventBus.OnBackClicked -= GameEventBusOnBackClicked;
         GameEventBus.OnLevelFinished -= GameEventBusOnLevelFinished;
-        GameEventBus.OnNextClicked -= GameEventBusOnNextClicked;
+        GameEventBus.OnLevelLoaded -= GameEventBus_OnLevelLoaded;
+        GameEventBus.OnNextClicked -= GameEventBus_OnNextClicked;
     }
     private void GameEventBusOnPlayClicked()
     {
         ChangeCanvas(1);
     }
-    private void GameEventBusOnNextClicked()
+    private void GameEventBus_OnLevelLoaded()
     {
         ChangeCanvas(1);
+    }
+    private void GameEventBus_OnNextClicked()
+    {
+        ChangeCanvas(4);
     }
     private void GameEventBusOnLevelsClicked()
     {
         ChangeCanvas(2);
-    }
-    private void GameEventBusOnSettingsClicked()
-    {
-        ChangeCanvas(3);
     }
     private void GameEventBusOnMenuClicked()
     {
@@ -77,6 +77,6 @@ public class ViewManager : MonoBehaviour
     }
     private void GameEventBusOnLevelFinished(Stars stars)
     {
-        ChangeCanvas(4);
+        ChangeCanvas(3);
     }
 }

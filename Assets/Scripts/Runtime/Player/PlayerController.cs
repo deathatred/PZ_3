@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     }
     private async UniTask MoveToTargetAsync(Transform target, CancellationToken token)
     {
-        await RotateToTarget(target, token);
+        await RotateToTargetAsync(target, token);
 
        
         while (Vector3.Distance(transform.position, target.position) > 0.6f)
@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
         _playerRb.linearVelocity = Vector3.zero;
         GameEventBus.FinishedMoving();
     }
-    private async UniTask RotateToTarget(Transform target, CancellationToken token)
+    private async UniTask RotateToTargetAsync(Transform target, CancellationToken token)
     {
         float rotationSpeed = 100f;
         Vector3 direction = (target.position - transform.position).normalized;

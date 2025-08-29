@@ -49,7 +49,7 @@ public class Level : MonoBehaviour
             Transform chest = SpawnChest(_targetSpawnPoints[index].transform, new Vector3(_player.position.x, spawnBasePos.y, _player.position.z));
             spawnedTargets.Add(chest);
             _targets.Add(chest);
-            await AnimateTargetRise(chest, baseOffset, 0.3f, token);
+            await AnimateTargetRiseAsync(chest, baseOffset, 0.3f, token);
             try
             {
                 await UniTask.Delay(System.TimeSpan.FromSeconds(delayBetweenTargets), cancellationToken: token);
@@ -77,7 +77,7 @@ public class Level : MonoBehaviour
             for (int j = 0; j < spawnedTargets.Count; j++)
             {
                 float targetHeight = baseOffset + (spawnedTargets.Count - j - 1) * offsetStep;
-                riseTasks.Add(AnimateTargetRise(spawnedTargets[j], targetHeight, 0.1f, token));
+                riseTasks.Add(AnimateTargetRiseAsync(spawnedTargets[j], targetHeight, 0.1f, token));
             }
 
             await UniTask.WhenAll(riseTasks);
@@ -92,7 +92,7 @@ public class Level : MonoBehaviour
         }    
         GameEventBus.FinishedSpawning();
     }
-    private async UniTask AnimateTargetRise(Transform target, float finalY, float duration, CancellationToken token)
+    private async UniTask AnimateTargetRiseAsync(Transform target, float finalY, float duration, CancellationToken token)
     {
         Vector3 startPos = target.position;
         Vector3 endPos = new Vector3(startPos.x, finalY, startPos.z);
@@ -128,14 +128,12 @@ public class Level : MonoBehaviour
         float chestPivotOffset = 0.5f;
 
         Vector3 spawnPos = new Vector3(
-            lastTarget.position.x /*- chestPivotOffset * 2*/,
+            lastTarget.position.x,
             lastTarget.position.y - 1.5f + chestPivotOffset,
             lastTarget.position.z
         );
 
         Transform chest = Instantiate(_chestPrefab, spawnPos, Quaternion.identity);
-
-        // Дивимось лише по Y, щоб не нахилялась
         Vector3 targetLookPos = new Vector3(lookAtPos.x, chest.position.y, lookAtPos.z);
         chest.LookAt(targetLookPos);
 
@@ -158,14 +156,14 @@ public class Level : MonoBehaviour
         }
         if (_targets.Remove(target))
         {
-            LowerAllTargets().Forget();
+            LowerAllTargetsAsync().Forget();
             if (_targets.Count == 0)
             {
                 GameEventBus.AllTargetsDestroyed();
             }
         }
     }
-    private async UniTask LowerAllTargets()
+    private async UniTask LowerAllTargetsAsync()
     {
         float amountToLower = 1f;
         float duration = 0.1f;

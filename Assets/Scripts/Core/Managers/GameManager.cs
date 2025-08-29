@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -120,17 +121,22 @@ public class GameManager : MonoBehaviour
 
     private void GameEventBusOnNextClicked()
     {
+        StartNextLevelWithDelayAsync().Forget();
+    }
+    private async UniTask StartNextLevelWithDelayAsync()
+    {
         print(CurrentLevelIndex + " " + _levelsList.Count);
-        if (CurrentLevelIndex  < _levelsList.Count)
+        if (CurrentLevelIndex < _levelsList.Count)
         {
-            NextLevel();
+            await UniTask.Delay(3000);
+            NextLevelAsync().Forget();
         }
     }
     public List<Level> GetLevelsList()
     {
         return _levelsList;
     }
-    private void NextLevel()
+    private async UniTask NextLevelAsync()
     {
         _currentLevel.gameObject.SetActive(false);
         _currentLevelIndex++;
@@ -143,6 +149,7 @@ public class GameManager : MonoBehaviour
         _player.position = _playerDefaultSpawnPoint;
         _player.rotation = Quaternion.Euler(0f, 90f, 0f);
         SetCurrentLevel(_player);
+        await UniTask.Delay(2000);
         ChangeCurrentGameState(GameState.Started);
     }
     private void ResetLevel()
