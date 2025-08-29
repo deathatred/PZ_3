@@ -8,12 +8,10 @@ public class PausedState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-        Debug.Log("Entered Paused State");
 
     }
 
     public void Exit()
     {
-        Debug.Log("Exited Paused State");
     }
 }

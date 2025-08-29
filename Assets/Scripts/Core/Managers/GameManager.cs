@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -20,7 +21,7 @@ public class GameManager : MonoBehaviour
     public IGameState CurrentGameState { get; private set; }
     private LevelFlowSO _currentLevelFlowSO;
     private int _currentLevelProgress = 0;
-    private Vector3 _playerDefaultSpawnPoint = new Vector3(0f, 0.6f, 0f);   
+    private Vector3 _playerDefaultSpawnPoint = new Vector3(0f, 0.6f, 0f);
     private Transform _player;
 
     private void OnEnable()
@@ -30,13 +31,8 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         InitSingleton();
-        _currentLevel = _levelsList[_currentLevelIndex];
         _player = GameObject.FindGameObjectWithTag("Player").transform;
-    }
-    private void Start()
-    {
-        _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-        _currentLevel.SetPlayer(_player);
+        SetCurrentLevel(_player);
     }
     private void OnDisable()
     {
@@ -63,7 +59,7 @@ public class GameManager : MonoBehaviour
     }
     public bool IsTargetSpawnPointLast()
     {
-        if (TargetSpawnPointIndex == _currentLevel.GetTargetSpawnPointsCount()-1)
+        if (TargetSpawnPointIndex == _currentLevel.GetTargetSpawnPointsCount() - 1)
         {
             return true;
         }
@@ -88,8 +84,8 @@ public class GameManager : MonoBehaviour
         GameEventBus.OnShootingEnded += GameEventBusOnShootingEnded;
         GameEventBus.OnPlayClicked += GameEventBusOnPlayClicked;
         GameEventBus.OnMenuClicked += GameEventBusOnMenuClicked;
+        GameEventBus.OnNextClicked += GameEventBusOnNextClicked;
     }
-
     private void UnsubscribeFromEvents()
     {
         GameEventBus.OnAllTargetsDestroyed -= GameEventBusGameNextState;
@@ -98,6 +94,7 @@ public class GameManager : MonoBehaviour
         GameEventBus.OnShootingEnded -= GameEventBusOnShootingEnded;
         GameEventBus.OnPlayClicked -= GameEventBusOnPlayClicked;
         GameEventBus.OnMenuClicked -= GameEventBusOnMenuClicked;
+        GameEventBus.OnNextClicked -= GameEventBusOnNextClicked;
     }
     private void GameEventBusOnMenuClicked()
     {
@@ -111,7 +108,6 @@ public class GameManager : MonoBehaviour
     private void GameEventBusOnShootingEnded()
     {
         int listOffset = 1;
-        print(TargetSpawnPointIndex - listOffset);
         if ((TargetSpawnPointIndex - listOffset) >= 0)
         {
             _currentLevel.DestroyObstacles(TargetSpawnPointIndex - listOffset);
@@ -121,9 +117,33 @@ public class GameManager : MonoBehaviour
     {
         NextState();
     }
+
+    private void GameEventBusOnNextClicked()
+    {
+        print(CurrentLevelIndex + " " + _levelsList.Count);
+        if (CurrentLevelIndex  < _levelsList.Count)
+        {
+            NextLevel();
+        }
+    }
     public List<Level> GetLevelsList()
     {
         return _levelsList;
+    }
+    private void NextLevel()
+    {
+        _currentLevel.gameObject.SetActive(false);
+        _currentLevelIndex++;
+        MovePointIndex = 0;
+        TargetSpawnPointIndex = 0;
+        _currentLevelProgress = 0;
+        _currentLevel = _levelsList[_currentLevelIndex];
+        _currentLevel.gameObject.SetActive(true);
+        _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
+        _player.position = _playerDefaultSpawnPoint;
+        _player.rotation = Quaternion.Euler(0f, 90f, 0f);
+        SetCurrentLevel(_player);
+        ChangeCurrentGameState(GameState.Started);
     }
     private void ResetLevel()
     {
@@ -136,6 +156,12 @@ public class GameManager : MonoBehaviour
         _player.rotation = Quaternion.Euler(0f, 90f, 0f);
         _currentLevel.ResetLevel();
         ChangeCurrentGameState(GameState.Menu);
+    }
+    private void SetCurrentLevel(Transform player)
+    {
+        _currentLevel = _levelsList[_currentLevelIndex];
+        _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
+        _currentLevel.SetPlayer(player);
     }
     public int GetRemainingBullets()
     {

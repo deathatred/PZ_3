@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 852213f0f67d98d4787e8503b2b05190, type: 3}
-  m_Name: Colors
+  m_Name: LevelOneColors
   m_EditorClassIdentifier: 
   ColorsList:
   - {r: 0, g: 1, b: 0.8384063, a: 0}

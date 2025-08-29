@@ -21,6 +21,7 @@ public static class GameEventBus
     public static event Action OnPlayClicked;
     public static event Action OnBackClicked;
     public static event Action OnLevelsClicked;
+    public static event Action OnNextClicked;
 
     #endregion
 
@@ -86,6 +87,10 @@ public static class GameEventBus
     public static void BackClicked()
     {
         OnBackClicked?.Invoke();
+    }
+    public static void NextClicked()
+    {
+        OnNextClicked?.Invoke();
     }
     #endregion
 }

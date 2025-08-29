@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Level : MonoBehaviour
@@ -24,6 +25,7 @@ public class Level : MonoBehaviour
     private void OnEnable()
     {
         SubscribeToEvents();
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
     }
     private void Start()
     {
@@ -126,7 +128,7 @@ public class Level : MonoBehaviour
         float chestPivotOffset = 0.5f;
 
         Vector3 spawnPos = new Vector3(
-            lastTarget.position.x - chestPivotOffset * 2,
+            lastTarget.position.x /*- chestPivotOffset * 2*/,
             lastTarget.position.y - 1.5f + chestPivotOffset,
             lastTarget.position.z
         );
@@ -141,16 +143,11 @@ public class Level : MonoBehaviour
     }
     private void TargetDestroyed(Transform target)
     {
-        foreach (var t in _targets)
-        {
-            Debug.Log(t.name);
-        }
         if (target.CompareTag("Chest"))
         {
             if (_targets.Count == 1)
             {
                 _targets.Remove(target);
-                print("all target destroyed (chest)");
                 GameEventBus.AllTargetsDestroyed();
             }
             else
@@ -164,7 +161,6 @@ public class Level : MonoBehaviour
             LowerAllTargets().Forget();
             if (_targets.Count == 0)
             {
-                print("all target destroyed");
                 GameEventBus.AllTargetsDestroyed();
             }
         }
@@ -219,7 +215,10 @@ public class Level : MonoBehaviour
     }
     public void SetPlayer(Transform player)
     {
+        print("for" + this + " " + player + "is set");
+        print((player == null) + "Is null?");
         _player = player;
+        print(_player);
     }
     public Transform GetMoveTarget(int index)
     {

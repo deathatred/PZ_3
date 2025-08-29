@@ -12,7 +12,6 @@ public class LevelSingleCell : MonoBehaviour
     {
         _levelText.text = $"Level {levelInfoSO.LevelNumber}";
         _levelPreview.sprite = levelInfoSO.LevelPreview;
-        print(levelInfoSO.LevelNumber + "Level number in cell");
         for (int i = 0; i < LevelsProgress.GetStars(levelInfoSO.LevelNumber); i++)
         {
             _starsImages[i].color = Color.yellow;

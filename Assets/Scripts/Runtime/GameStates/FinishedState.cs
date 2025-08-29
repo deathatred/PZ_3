@@ -9,14 +9,12 @@ public class FinishedState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-        Debug.Log("Entered Finished State");
         Stars stars = CountStars();
         FinishTheLevelAfterDelay(stars).Forget();
     }
 
     public void Exit()
     {
-        Debug.Log("Exited Finished State");
     }
     private Stars CountStars()
     {
@@ -25,21 +23,18 @@ public class FinishedState : IGameState
         if (remaining >= levelInfo.BulletsForThreeStars)
         {
             LevelsProgress.SaveStars(_manager.CurrentLevelIndex, (int)Stars.Three);
-            Debug.Log(_manager.CurrentLevelIndex + "Level index");
             levelInfo.StarsGained = (int)Stars.Three;
             return Stars.Three;      
         }
         else if (remaining >= levelInfo.BulletsForTwoStars)
         {
             LevelsProgress.SaveStars(_manager.CurrentLevelIndex, (int)Stars.Two);
-            Debug.Log(_manager.CurrentLevelIndex + "Level index");
             levelInfo.StarsGained = (int)Stars.Two;
             return Stars.Two;
         }
         else
         {
             LevelsProgress.SaveStars(_manager.CurrentLevelIndex, (int)Stars.One);
-            Debug.Log(_manager.CurrentLevelIndex + "Level index");
             levelInfo.StarsGained = (int)Stars.One;
             return Stars.One;
         }

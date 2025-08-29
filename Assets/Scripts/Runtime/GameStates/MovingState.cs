@@ -8,7 +8,6 @@ public class MovingState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-        Debug.Log("Entered Moving State");
 
         GameEventBus.SetNewMovingPoint(
            manager.CurrentLevel.GetMoveTarget(manager.MovePointIndex)
@@ -18,6 +17,5 @@ public class MovingState : IGameState
 
     public void Exit()
     {
-        Debug.Log("Exited Moving State");
     }
 }

@@ -8,13 +8,11 @@ public class StartedState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-        Debug.Log("Entered Started State");
         GameEventBus.LevelLoaded();
         _manager.NextState();
     }
 
     public void Exit()
     {
-        Debug.Log("Exited Started State");
     }
 }

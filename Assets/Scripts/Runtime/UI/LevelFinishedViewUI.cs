@@ -33,7 +33,7 @@ public class LevelFinishedViewUI : MonoBehaviour
     }
     private void NextClicked()
     {
-
+        GameEventBus.NextClicked();
     }
     private void MenuClicked()
     {

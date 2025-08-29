@@ -39,6 +39,7 @@ public class ViewManager : MonoBehaviour
         GameEventBus.OnMenuClicked += GameEventBusOnMenuClicked;
         GameEventBus.OnBackClicked += GameEventBusOnBackClicked;
         GameEventBus.OnLevelFinished += GameEventBusOnLevelFinished;
+        GameEventBus.OnNextClicked += GameEventBusOnNextClicked;
     }
     private void UnsubscribeFromEvents()
     {
@@ -48,8 +49,13 @@ public class ViewManager : MonoBehaviour
         GameEventBus.OnMenuClicked -= GameEventBusOnMenuClicked;
         GameEventBus.OnBackClicked -= GameEventBusOnBackClicked;
         GameEventBus.OnLevelFinished -= GameEventBusOnLevelFinished;
+        GameEventBus.OnNextClicked -= GameEventBusOnNextClicked;
     }
     private void GameEventBusOnPlayClicked()
+    {
+        ChangeCanvas(1);
+    }
+    private void GameEventBusOnNextClicked()
     {
         ChangeCanvas(1);
     }

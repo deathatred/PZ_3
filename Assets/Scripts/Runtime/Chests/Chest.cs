@@ -13,13 +13,11 @@ public class Chest : MonoBehaviour, IDamageable
     {
         if (_health > 0)
         {
-            print("chest damaged");
             _health -= amount;
             _animator.SetTrigger(HitHash);
         }
         if (_health <= 0)
         {
-            print("targetDestroyed");
             GameEventBus.TargetDestroyed(transform);
             _animator.SetBool(OpenHash, true);
             Destroy(gameObject, 5f);

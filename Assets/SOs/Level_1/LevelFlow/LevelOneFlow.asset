@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 999477e3c36309441bd28f798b100d7a, type: 3}
-  m_Name: Level_One_Flow
+  m_Name: LevelOneFlow
   m_EditorClassIdentifier: 
   GameStateList: 000000000100000002000000030000000100000001000000020000000300000005000000
