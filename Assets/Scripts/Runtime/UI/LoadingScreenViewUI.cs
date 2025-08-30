@@ -11,6 +11,15 @@ public class LoadingScreenViewUI : MonoBehaviour
 
     private void Start()
     {
+        Init();
+    }
+
+    private void Update()
+    {
+        HandleAnimation();
+    }
+    private void Init()
+    {
         _loadingCanvas = GetComponent<Canvas>();
         _rotationTween = _loadingImage.rectTransform
             .DORotate(new Vector3(0, 0, 360), 1f, RotateMode.FastBeyond360)
@@ -18,8 +27,7 @@ public class LoadingScreenViewUI : MonoBehaviour
             .SetEase(Ease.Linear)
             .Pause();
     }
-
-    private void Update()
+    private void HandleAnimation()
     {
         if (_loadingCanvas.enabled && !_rotationTween.IsPlaying())
         {

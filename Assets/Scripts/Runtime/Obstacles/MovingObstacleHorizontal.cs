@@ -9,7 +9,7 @@ public class MovingObstacleHorizontal : MovingObstacle
 
     private void OnEnable()
     {
-        _localStartPos = transform.localPosition;
+        SetStartPos();
     }
 
     protected override void Move()
@@ -17,5 +17,9 @@ public class MovingObstacleHorizontal : MovingObstacle
         float offset = Mathf.Sin(Time.time * _frequency * 2 * Mathf.PI) * _distance;
         Vector3 localForward = transform.localRotation * Vector3.forward;
         transform.localPosition = _localStartPos + localForward * offset;
+    }
+    private void SetStartPos()
+    {
+        _localStartPos = transform.localPosition;
     }
 }

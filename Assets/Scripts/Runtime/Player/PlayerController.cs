@@ -17,11 +17,15 @@ public class PlayerController : MonoBehaviour
     }
     private void Awake()
     {
-        _playerRb = GetComponent<Rigidbody>();
+        Init();
     }
     private void OnDisable()
     {
         UnsubscribeFromEvents();
+    }
+    private void Init()
+    {
+        _playerRb = GetComponent<Rigidbody>();
     }
     private void MoveToTarget(Transform target)
     {

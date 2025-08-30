@@ -8,12 +8,16 @@ public class MovingObstacleVertical : MovingObstacle
 
     private void OnEnable()
     {
-        _startPos = transform.position;
+        SetStartPos();
     }
     protected override void Move()
     {
         float xOffset = Mathf.Sin(Time.time * _frequency * 2 * Mathf.PI) * _distance;
         transform.position = _startPos + Vector3.up * xOffset;
 
+    }
+    private void SetStartPos()
+    {
+        _startPos = transform.position;
     }
 }

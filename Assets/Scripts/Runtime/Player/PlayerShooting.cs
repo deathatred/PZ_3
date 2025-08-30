@@ -15,7 +15,7 @@ public class PlayerShooting : MonoBehaviour
     }
     private void Awake()
     {
-        _bulletPool = new(_bulletPrefab, 30);
+        InitBulletPool();
     }
     private void Update()
     {
@@ -24,6 +24,10 @@ public class PlayerShooting : MonoBehaviour
     private void OnDisable()
     {
         UnsubscribeFromEvents();
+    }
+    private void InitBulletPool()
+    {
+        _bulletPool = new(_bulletPrefab, 30);
     }
     private void SpawnBullet()
     {

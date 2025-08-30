@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         InitSingleton();
-        _player = GameObject.FindGameObjectWithTag("Player").transform;
+        GetPlayer();
         SetCurrentLevel(_player);
     }
     private void OnDisable()
@@ -76,6 +76,10 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+    private void GetPlayer()
+    {
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
     }
     private void SubscribeToEvents()
     {
