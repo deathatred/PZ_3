@@ -25,7 +25,6 @@ public class Level : MonoBehaviour
     private void OnEnable()
     {
         SubscribeToEvents();
-        _player = GameObject.FindGameObjectWithTag("Player").transform;
     }
     private void Start()
     {

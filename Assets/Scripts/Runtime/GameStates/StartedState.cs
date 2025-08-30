@@ -8,7 +8,7 @@ public class StartedState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-        GameEventBus.LevelLoaded();
+        GameEventBus.LevelLoaded(manager.CurrentLevel);
         _manager.NextState();
     }
 

@@ -47,7 +47,7 @@ public class LevelFinishedViewUI : MonoBehaviour
             _starsImages[i].color = Color.yellow;
         }
     }
-    private void GameEventBusOnLevelLoaded()
+    private void GameEventBusOnLevelLoaded(Level level)
     {
         foreach (var starImage in _starsImages)
         {

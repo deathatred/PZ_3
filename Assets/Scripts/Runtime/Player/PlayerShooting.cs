@@ -44,6 +44,7 @@ public class PlayerShooting : MonoBehaviour
         {
             SpawnBullet();
             _bullets -= 1;
+            GameEventBus.BulletShot(_bullets);
             _shootTimer = _shootTimerMax;
         }
     }
@@ -52,9 +53,9 @@ public class PlayerShooting : MonoBehaviour
         GameEventBus.OnLevelLoaded += GameEventBusOnLevelLoaded;
     }
 
-    private void GameEventBusOnLevelLoaded()
+    private void GameEventBusOnLevelLoaded(Level level)
     {
-        _bullets = GameManager.Instance.CurrentLevel.GetLevelInfoSO().NumberOfBullets;
+        _bullets = level.GetLevelInfoSO().NumberOfBullets;
     }
 
     private void UnsubscribeFromEvents()

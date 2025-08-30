@@ -128,6 +128,7 @@ public class GameManager : MonoBehaviour
         print(CurrentLevelIndex + " " + _levelsList.Count);
         if (CurrentLevelIndex < _levelsList.Count)
         {
+            GameEventBus.LoadNextLevel();
             await UniTask.Delay(3000);
             NextLevelAsync().Forget();
         }

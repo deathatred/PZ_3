@@ -7,15 +7,16 @@ public class GameViewUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _bulletsText;
     [SerializeField] private TextMeshProUGUI _levelText;
     [SerializeField] private Button _menuButton;
-
+   
     private void OnEnable()
     {
         SubscribeToEvents();
     }
-    private void Awake()
+    public void Init(Level level)
     {
-        SetBulletsText(10);
-        SetLevelText(1);
+        InfoLevelSO levelInfo = level.GetLevelInfoSO();
+        SetBulletsText(levelInfo.NumberOfBullets);
+        SetLevelText(levelInfo.LevelNumber);
     }
     private void OnDisable()
     {
@@ -24,14 +25,26 @@ public class GameViewUI : MonoBehaviour
     private void SubscribeToEvents()
     {
         _menuButton.onClick.AddListener(MenuPressed);
+        GameEventBus.OnBulletShot += GameEventBusOnBulletShot;
+        GameEventBus.OnLevelLoaded += GameEventBusOnLevelLoaded;
     }
     private void UnsubscribeFromEvents()
     {
         _menuButton.onClick.RemoveListener(MenuPressed);
+        GameEventBus.OnBulletShot -= GameEventBusOnBulletShot;
+        GameEventBus.OnLevelLoaded -= GameEventBusOnLevelLoaded;
+    }
+    private void GameEventBusOnBulletShot(int bullets)
+    {
+        _bulletsText.text = bullets.ToString();
     }
     private void MenuPressed()
     {
         GameEventBus.MenuClicked();
+    }
+    private void GameEventBusOnLevelLoaded(Level level)
+    {
+        Init(level);
     }
     private void SetBulletsText(int amount)
     {
