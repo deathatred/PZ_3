@@ -43,6 +43,10 @@ public class PlayerShooting : MonoBehaviour
             GameManager.Instance.CurrentGameState is ShootingState)
         {
             SpawnBullet();
+            if (_bullets == 0)
+            {
+                _bullets = 10;
+            }
             _bullets -= 1;
             GameEventBus.BulletShot(_bullets);
             _shootTimer = _shootTimerMax;
