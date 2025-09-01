@@ -141,22 +141,51 @@ public class GameManager : MonoBehaviour
     {
         return _levelsList;
     }
-    private async UniTask NextLevelAsync()
+
+    public async UniTask ChangeLevel(int index)
+    {
+        int indexNormalized = index - 1;
+        if (indexNormalized == _currentLevelIndex)
+        {
+            print("reseting");
+            ResetLevel();
+            return;
+        }
+        _currentLevel.gameObject.SetActive(false);
+        _currentLevelIndex = indexNormalized;
+        await LoadLevel(_currentLevelIndex);
+    }
+
+    public async UniTask NextLevelAsync()
     {
         _currentLevel.gameObject.SetActive(false);
         _currentLevelIndex++;
+        await LoadLevel(_currentLevelIndex);
+    }
+    private async UniTask LoadLevel(int index)
+    {
         MovePointIndex = 0;
         TargetSpawnPointIndex = 0;
         _currentLevelProgress = 0;
-        _currentLevel = _levelsList[_currentLevelIndex];
+
+        _currentLevel = _levelsList[index];
         _currentLevel.gameObject.SetActive(true);
+
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-        _player.position = _playerDefaultSpawnPoint;
-        _player.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        ResetPlayerTransform();
         SetCurrentLevel(_player);
+
         await UniTask.Delay(2000);
         ChangeCurrentGameState(GameState.Started);
     }
+
+    private void ResetPlayerTransform()
+    {
+        _player.position = _playerDefaultSpawnPoint;
+        _player.rotation = Quaternion.Euler(0f, 90f, 0f);
+    }
+
     private void ResetLevel()
     {
         MovePointIndex = 0;

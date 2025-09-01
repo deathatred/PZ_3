@@ -40,8 +40,8 @@ public class ViewManager : MonoBehaviour
         GameEventBus.OnLevelFinished += GameEventBusOnLevelFinished;
         GameEventBus.OnLevelLoaded += GameEventBusOnLevelLoaded;
         GameEventBus.OnNextLevelLoading += GameEventBusOnNextLevelLoading;
+        GameEventBus.OnLevelChosen += GameEventBusOnLevelChosen;
     }
-
     private void UnsubscribeFromEvents()
     {
         GameEventBus.OnPlayClicked -= GameEventBusOnPlayClicked;
@@ -61,6 +61,10 @@ public class ViewManager : MonoBehaviour
         ChangeCanvas(1);
     }
 
+    private void GameEventBusOnLevelChosen()
+    {
+        ChangeCanvas(4);
+    }
     private void GameEventBusOnNextLevelLoading()
     {
         ChangeCanvas(4);
