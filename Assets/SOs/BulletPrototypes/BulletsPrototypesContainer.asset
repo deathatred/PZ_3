@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee664d763f393654fb28e74a8d96a3c1, type: 3}
+  m_Name: BulletsPrototypesContainer
+  m_EditorClassIdentifier: 
+  BulletPrototypes:
+  - Key: FastBullet
+    Prototype: {fileID: 11400000, guid: d5851df1ca4eb6842a0d769d02e680bb, type: 2}
+  - Key: DefaultBullet
+    Prototype: {fileID: 11400000, guid: bff10493ec42bcd44a768871670d3ebd, type: 2}

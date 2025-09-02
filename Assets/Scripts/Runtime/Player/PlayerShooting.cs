@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
@@ -35,6 +34,7 @@ public class PlayerShooting : MonoBehaviour
         bullet.Init(_bulletPool);
         bullet.transform.position = transform.position;
         bullet.transform.rotation = transform.rotation;
+        bullet.ApplyPrototype(BulletDatabase.Instance.GetPrototype("FastBullet"));
         bullet.gameObject.SetActive(true);
     }
     private void HandleShooting()
@@ -47,6 +47,7 @@ public class PlayerShooting : MonoBehaviour
             GameManager.Instance.CurrentGameState is ShootingState)
         {
             SpawnBullet();
+
             if (_bullets == 0)
             {
                 _bullets = 10;

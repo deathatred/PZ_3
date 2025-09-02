@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
   
     private void OnTriggerEnter(UnityEngine.Collider other)
     {
-        if (!other.CompareTag("Player")) //TODO: Change to shoot point empty gameObject on Player prefab.
+        if (!other.CompareTag("Player"))
         {
             if (other.TryGetComponent<IDamageable>(out var target))
             {
@@ -54,5 +54,11 @@ public class Bullet : MonoBehaviour
     private void SetTimer()
     {
         _lifeTimer = _lifeTime;
+    }
+    public void ApplyPrototype(BulletPrototypeSO prototype)
+    {
+        _flySpeed = prototype.Speed;
+        _damage = prototype.Damage;
+        GetComponentInChildren<MeshRenderer>().material.color = prototype.Color;
     }
 }
