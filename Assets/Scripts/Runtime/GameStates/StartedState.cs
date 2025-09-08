@@ -8,8 +8,9 @@ public class StartedState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-        GameEventBus.LevelLoaded(manager.CurrentLevel);
-        _manager.NextState();
+        ILevelService levelService = manager.GetCurrentLevelService();
+        GameEventBus.LevelLoaded(levelService.CurrentLevel);
+        _manager.GetGameStateController().NextState();
     }
 
     public void Exit()

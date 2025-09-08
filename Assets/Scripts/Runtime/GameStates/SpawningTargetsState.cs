@@ -6,8 +6,10 @@ public class SpawningTargetsState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-        GameEventBus.SpawnTargets(_manager.TargetSpawnPointIndex,_manager.IsTargetSpawnPointLast());
-        _manager.AddTargetSpawnPointIndex();
+        ILevelService leverServise = manager.GetCurrentLevelService();
+
+        GameEventBus.SpawnTargets(leverServise.TargetSpawnPointIndex,_manager.IsTargetSpawnPointLast());
+        leverServise.AddTargetSpawnPointIndex();
         
     }
 

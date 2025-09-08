@@ -16,7 +16,8 @@ public static class GameEventBus
     public static event Action OnShoot;
     public static event Action<Stars> OnLevelFinished;
     public static event Action OnNextLevelLoading;
-    public static event Action<int> OnBulletShot; 
+    public static event Action OnLevelFinishedLoading;
+    public static event Action<int> OnBulletShot;
     #endregion
     #region UI Events
     public static event Action OnSettingsClicked;
@@ -107,6 +108,10 @@ public static class GameEventBus
     public static void LevelChosen()
     {
         OnLevelChosen?.Invoke();
+    }
+    public static void LevelFinishedLoading()
+    { 
+        OnLevelFinishedLoading?.Invoke();
     }
     #endregion
 }

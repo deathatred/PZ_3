@@ -35,6 +35,6 @@ public class LevelsMenuViewUI : MonoBehaviour
     }
     private void InitComponents()
     {
-        _levelListScrollView.Init(GameManager.Instance.GetLevelsList());
+        _levelListScrollView.Init(GameManager.Instance.GetCurrentLevelService().GetLevelsList());
     }
 }

@@ -22,7 +22,7 @@ public class LevelSingleCell : MonoBehaviour
         }
         _levelButton.onClick.AddListener(() =>
         {
-            GameManager.Instance.ChangeLevel(levelInfoSO.LevelNumber).Forget();
+            GameManager.Instance.GetCurrentLevelService().ChangeLevelAsync(levelInfoSO.LevelNumber).Forget();
             GameEventBus.LevelChosen();
         });
     }

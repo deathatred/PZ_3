@@ -8,11 +8,11 @@ public class MovingState : IGameState
     public void Enter(GameManager manager)
     {
         _manager = manager;
-
+        ILevelService currentLevelService = manager.GetCurrentLevelService();
         GameEventBus.SetNewMovingPoint(
-           manager.CurrentLevel.GetMoveTarget(manager.MovePointIndex)
+           currentLevelService.CurrentLevel.GetMoveTarget(currentLevelService.MovePointIndex)
        );
-        manager.AddMovePointIndex();
+        currentLevelService.AddMovePointIndex();
     }
 
     public void Exit()

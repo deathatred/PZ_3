@@ -1,28 +1,18 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private List<Level> _levelsList;
     public static GameManager Instance { get; private set; }
-    public int MovePointIndex { get; private set; } = 0;
-    public int TargetSpawnPointIndex { get; private set; } = 0;
-    public int CurrentLevelIndex
-    {
-        get { return _currentLevelIndex + 1; }
-        private set { _currentLevelIndex = value; }
-    }
-    private int _currentLevelIndex = 0;
-    private Level _currentLevel;
-    public Level CurrentLevel => _currentLevel;
 
-    public IGameState CurrentGameState { get; private set; }
-    private LevelFlowSO _currentLevelFlowSO;
-    private int _currentLevelProgress = 0;
-    private Vector3 _playerDefaultSpawnPoint = new Vector3(0f, 0.6f, 0f);
+    [SerializeField] private List<Level> _levelsList;
+    private ILevelService _levelService;
+    private GameStateController _gameStateController;
+    private PlayerSpawnService _playerSpawnService;
     private Transform _player;
 
     private void OnEnable()
@@ -33,38 +23,18 @@ public class GameManager : MonoBehaviour
     {
         InitSingleton();
         GetPlayer();
-        SetCurrentLevel(_player);
+        Init();
     }
     private void OnDisable()
     {
         UnsubscribeFromEvents();
     }
-    public void ChangeCurrentGameState(GameState newState)
+    private void Init()
     {
-        CurrentGameState?.Exit();
-        CurrentGameState = StateFactory.Create(newState);
-        CurrentGameState.Enter(this);
-    }
-    public void NextState()
-    {
-        _currentLevelProgress++;
-        ChangeCurrentGameState(_currentLevelFlowSO.GameStateList[_currentLevelProgress]);
-    }
-    public void AddMovePointIndex()
-    {
-        MovePointIndex++;
-    }
-    public void AddTargetSpawnPointIndex()
-    {
-        TargetSpawnPointIndex++;
-    }
-    public bool IsTargetSpawnPointLast()
-    {
-        if (TargetSpawnPointIndex == _currentLevel.GetTargetSpawnPointsCount() - 1)
-        {
-            return true;
-        }
-        return false;
+        _gameStateController = new GameStateController(this);
+        _levelService = new LevelService(_levelsList,this, _player);
+        _levelService.SetCurrentLevel();
+        _playerSpawnService = new PlayerSpawnService(_player);
     }
     private void InitSingleton()
     {
@@ -90,6 +60,7 @@ public class GameManager : MonoBehaviour
         GameEventBus.OnPlayClicked += GameEventBusOnPlayClicked;
         GameEventBus.OnMenuClicked += GameEventBusOnMenuClicked;
         GameEventBus.OnNextClicked += GameEventBusOnNextClicked;
+        GameEventBus.OnLevelFinishedLoading += GameEventBus_OnLevelFinishedLoading;
     }
     private void UnsubscribeFromEvents()
     {
@@ -100,113 +71,60 @@ public class GameManager : MonoBehaviour
         GameEventBus.OnPlayClicked -= GameEventBusOnPlayClicked;
         GameEventBus.OnMenuClicked -= GameEventBusOnMenuClicked;
         GameEventBus.OnNextClicked -= GameEventBusOnNextClicked;
+        GameEventBus.OnLevelFinishedLoading -= GameEventBus_OnLevelFinishedLoading;
     }
     private void GameEventBusOnMenuClicked()
     {
-        ResetLevel();
+        _levelService.ResetLevel();
+        _gameStateController.ChangeCurrentGameState(GameState.Menu);
     }
     private void GameEventBusOnPlayClicked()
     {
-        ChangeCurrentGameState(GameState.Started);
+        _gameStateController.ChangeCurrentGameState(GameState.Started);
     }
-
     private void GameEventBusOnShootingEnded()
     {
         int listOffset = 1;
-        if ((TargetSpawnPointIndex - listOffset) >= 0)
+        if ((_levelService.TargetSpawnPointIndex - listOffset) >= 0)
         {
-            _currentLevel.DestroyObstacles(TargetSpawnPointIndex - listOffset);
+            _levelService.CurrentLevel.DestroyObstacles(_levelService.TargetSpawnPointIndex - listOffset);
         }
     }
     private void GameEventBusGameNextState()
     {
-        NextState();
+        _gameStateController.NextState();
     }
-
     private void GameEventBusOnNextClicked()
     {
-        StartNextLevelWithDelayAsync().Forget();
+        _levelService.StartNextLevelWithDelayAsync().Forget();
     }
-    private async UniTask StartNextLevelWithDelayAsync()
+    private void GameEventBus_OnLevelFinishedLoading()
     {
-        print(CurrentLevelIndex + " " + _levelsList.Count);
-        if (CurrentLevelIndex < _levelsList.Count)
-        {
-            GameEventBus.LoadNextLevel();
-            await UniTask.Delay(3000);
-            NextLevelAsync().Forget();
-        }
-    }
-    public List<Level> GetLevelsList()
-    {
-        return _levelsList;
-    }
-
-    public async UniTask ChangeLevel(int index)
-    {
-        int indexNormalized = index - 1;
-        if (indexNormalized == _currentLevelIndex)
-        {
-            print("reseting");
-            ResetLevel();
-            return;
-        }
-        _currentLevel.gameObject.SetActive(false);
-        _currentLevelIndex = indexNormalized;
-        await LoadLevel(_currentLevelIndex);
-    }
-
-    public async UniTask NextLevelAsync()
-    {
-        _currentLevel.gameObject.SetActive(false);
-        _currentLevelIndex++;
-        await LoadLevel(_currentLevelIndex);
-    }
-    private async UniTask LoadLevel(int index)
-    {
-        MovePointIndex = 0;
-        TargetSpawnPointIndex = 0;
-        _currentLevelProgress = 0;
-
-        _currentLevel = _levelsList[index];
-        _currentLevel.gameObject.SetActive(true);
-
-        _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-
-        ResetPlayerTransform();
-        SetCurrentLevel(_player);
-
-        await UniTask.Delay(2000);
-        ChangeCurrentGameState(GameState.Started);
-    }
-
-    private void ResetPlayerTransform()
-    {
-        _player.position = _playerDefaultSpawnPoint;
-        _player.rotation = Quaternion.Euler(0f, 90f, 0f);
-    }
-
-    private void ResetLevel()
-    {
-        MovePointIndex = 0;
-        TargetSpawnPointIndex = 0;
-        _currentLevelProgress = 0;
-        _currentLevel = _levelsList[_currentLevelIndex];
-        _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-        _player.position = _playerDefaultSpawnPoint;
-        _player.rotation = Quaternion.Euler(0f, 90f, 0f);
-        _currentLevel.ResetLevel();
-        ChangeCurrentGameState(GameState.Menu);
-    }
-    private void SetCurrentLevel(Transform player)
-    {
-        _currentLevel = _levelsList[_currentLevelIndex];
-        _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-        _currentLevel.SetPlayer(player);
+        _gameStateController.ChangeCurrentGameState(GameState.Started);
     }
     public int GetRemainingBullets()
     {
         var playerShooting = _player.GetComponent<PlayerShooting>();
         return playerShooting.GetBullets();
+    }
+    public ILevelService GetCurrentLevelService()
+    {
+        return _levelService;
+    }
+    public GameStateController GetGameStateController()
+    {
+        return _gameStateController;
+    }
+    public PlayerSpawnService GetPlayerSpawnService()
+    {
+        return _playerSpawnService;
+    }
+    public bool IsTargetSpawnPointLast()
+    {
+        if (_levelService.TargetSpawnPointIndex == _levelService.CurrentLevel.GetTargetSpawnPointsCount() - 1)
+        {
+            return true;
+        }
+        return false;
     }
 }
