@@ -29,6 +29,28 @@ public class LevelService : ILevelService
         _gameManager = manager;
         _levelsList = levels;
     }
+    public void Init()
+    {
+        GameEventBus.OnMenuClicked += GameEventBusOnMenuClicked;
+        GameEventBus.OnShootingEnded += GameEventBusOnShootingEnded;
+        GameEventBus.OnNextClicked += GameEventBusOnNextClicked;
+    }
+    private void GameEventBusOnShootingEnded()
+    {
+        int listOffset = 1;
+        if ((TargetSpawnPointIndex - listOffset) >= 0)
+        {
+            CurrentLevel.DestroyObstacles(TargetSpawnPointIndex - listOffset);
+        }
+    }
+    private void GameEventBusOnMenuClicked()
+    {
+        ResetLevel();
+    }
+    private void GameEventBusOnNextClicked()
+    {
+        StartNextLevelWithDelayAsync().Forget();
+    }
     public async UniTask ChangeLevelAsync(int level)
     {
         _cts?.Cancel();
@@ -60,13 +82,14 @@ public class LevelService : ILevelService
         _currentLevelProgress = 0;
 
         _currentLevel = _levelsList[index];
+      
         _currentLevel.gameObject.SetActive(true);
 
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
 
         _gameManager.GetPlayerSpawnService().ResetPlayerTransform();
         SetCurrentLevel();
-
+        ResetLevel();
         await UniTask.Delay(2000).AttachExternalCancellation(token);
         GameEventBus.LevelFinishedLoading();
     }
@@ -92,9 +115,7 @@ public class LevelService : ILevelService
     }
 
     public void ResetLevel()
-    {
-        _cts?.Cancel();
-
+    { 
         MovePointIndex = 0;
         TargetSpawnPointIndex = 0;
         _currentLevelProgress = 0;
@@ -131,5 +152,20 @@ public class LevelService : ILevelService
     public void AddTargetSpawnPointIndex()
     {
         TargetSpawnPointIndex++;
+    }
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        GameEventBus.OnMenuClicked -= GameEventBusOnMenuClicked;
+        GameEventBus.OnShootingEnded -= GameEventBusOnShootingEnded;
+        GameEventBus.OnNextClicked -= GameEventBusOnNextClicked;
+    }
+    public bool IsTargetSpawnPointLast()
+    {
+        if (TargetSpawnPointIndex == CurrentLevel.GetTargetSpawnPointsCount() - 1)
+        {
+            return true;
+        }
+        return false;
     }
 }

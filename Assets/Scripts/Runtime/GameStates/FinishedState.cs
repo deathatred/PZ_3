@@ -1,6 +1,7 @@
+using Cysharp.Threading.Tasks;
 using System.Diagnostics;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using Debug = UnityEngine.Debug;
 
 public class FinishedState : IGameState
@@ -20,7 +21,8 @@ public class FinishedState : IGameState
     {
         ILevelService levelService = _manager.GetCurrentLevelService();
         InfoLevelSO levelInfo = levelService.CurrentLevel.GetLevelInfoSO();
-        int remaining = _manager.GetRemainingBullets();
+        var playerShooting = _manager.GetPlayer().GetComponent<PlayerShooting>();
+        int remaining = playerShooting.GetBullets();
         if (remaining >= levelInfo.BulletsForThreeStars)
         {
             LevelsProgress.SaveStars(levelService.CurrentLevelIndex, (int)Stars.Three);

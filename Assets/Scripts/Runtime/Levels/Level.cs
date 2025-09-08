@@ -20,16 +20,13 @@ public class Level : MonoBehaviour
     private Transform _player;
     private List<Transform> _targets = new List<Transform>();
     private int _targetsAmount = 10;
-    private CancellationTokenSource _targetCts;
+    private CancellationTokenSource _targetCts = new CancellationTokenSource();
 
     private void OnEnable()
     {
         SubscribeToEvents();
     }
-    private void Start()
-    {
-        _targetCts = new CancellationTokenSource();
-    }
+
     private void OnDisable()
     {
         UnsubscribeFromEvents();

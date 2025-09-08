@@ -1,9 +1,10 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public interface ILevelService
+public interface ILevelService : IDisposable
 {
     Level CurrentLevel { get; }
     int TargetSpawnPointIndex { get; }
@@ -20,4 +21,6 @@ public interface ILevelService
     void ProgressLevel();
     void AddMovePointIndex();
     void AddTargetSpawnPointIndex();
+    bool IsTargetSpawnPointLast();
+    void Init();
 }
