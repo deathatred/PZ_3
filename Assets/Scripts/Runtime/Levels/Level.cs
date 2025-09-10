@@ -209,10 +209,7 @@ public class Level : MonoBehaviour
     }
     public void SetPlayer(Transform player)
     {
-        print("for" + this + " " + player + "is set");
-        print((player == null) + "Is null?");
         _player = player;
-        print(_player);
     }
     public Transform GetMoveTarget(int index)
     {

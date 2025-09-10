@@ -12,7 +12,7 @@ public static class FirebaseFacade
         _bootstrap = new FirebaseBootstrap();
         await _bootstrap.Init();
 
-        _saveLoad = new FirebaseSaveLoadManager(_bootstrap);
+        _saveLoad = new FirebaseSaveLoadManager(_bootstrap);                                    
     }
     public static async UniTask SaveLevelStars(int level, Stars starsCount)
     {

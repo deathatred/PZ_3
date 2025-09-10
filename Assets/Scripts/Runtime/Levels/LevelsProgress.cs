@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
 
 public class LevelsProgress : MonoBehaviour
 {
