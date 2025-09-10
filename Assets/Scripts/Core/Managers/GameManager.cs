@@ -14,11 +14,13 @@ public class GameManager : MonoBehaviour
     private ILevelService _levelService;
     private GameStateController _gameStateController;
     private PlayerSpawnService _playerSpawnService;
-   
-    private void Awake()
+
+    private async void Awake()
     {
         InitSingleton();
         Init();
+        await FirebaseFacade.Init();
+        Debug.Log("Firebase Ready!");
     }
     private void OnDisable()
     {

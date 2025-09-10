@@ -11,7 +11,6 @@ public class GameStateController : IDisposable
     }
     public void Init()
     {
-        Debug.Log("sub");
         GameEventBus.OnAllTargetsDestroyed += GameEventBusGameNextState;
         GameEventBus.OnFinishedMoving += GameEventBusGameNextState;
         GameEventBus.OnFinishedSpawning += GameEventBusGameNextState;

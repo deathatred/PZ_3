@@ -11,7 +11,7 @@ public class LevelsMenuViewUI : MonoBehaviour
     {
         SubscribeToEvents();
     }
-    private void Awake()
+    private void Start()
     {
         InitComponents();
     }

@@ -12,11 +12,12 @@ public class LevelSingleCell : MonoBehaviour
     [SerializeField] private Button _levelButton;
 
 
-    public void Init(InfoLevelSO levelInfoSO)
+    public async UniTask Init(InfoLevelSO levelInfoSO)
     {
         _levelText.text = $"Level {levelInfoSO.LevelNumber}";
         _levelPreview.sprite = levelInfoSO.LevelPreview;
-        for (int i = 0; i < LevelsProgress.GetStars(levelInfoSO.LevelNumber); i++)
+        int starsCount = await LevelsProgress.GetStarsAsync(levelInfoSO.LevelNumber);
+        for (int i = 0; i < starsCount; i++)
         {
             _starsImages[i].color = Color.yellow;
         }

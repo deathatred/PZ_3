@@ -25,19 +25,19 @@ public class FinishedState : IGameState
         int remaining = playerShooting.GetBullets();
         if (remaining >= levelInfo.BulletsForThreeStars)
         {
-            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, (int)Stars.Three);
+            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, Stars.Three);
             levelInfo.StarsGained = (int)Stars.Three;
             return Stars.Three;      
         }
         else if (remaining >= levelInfo.BulletsForTwoStars)
         {
-            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, (int)Stars.Two);
+            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, Stars.Two);
             levelInfo.StarsGained = (int)Stars.Two;
             return Stars.Two;
         }
         else
         {
-            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, (int)Stars.One);
+            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, Stars.One);
             levelInfo.StarsGained = (int)Stars.One;
             return Stars.One;
         }

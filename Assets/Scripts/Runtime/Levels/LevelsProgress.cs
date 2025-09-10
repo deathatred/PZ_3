@@ -1,22 +1,19 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class LevelsProgress : MonoBehaviour
 {
     private const string StarsKey = "Level_{0}_Stars";
-    public static void SaveStars(int levelIndex, int stars)
+    public static void SaveStars(int levelIndex, Stars stars)
     {
-        int currentStars = GetStars(levelIndex);
-        if (stars > currentStars)
-        {
-            string key = string.Format(StarsKey, levelIndex);
-            PlayerPrefs.SetInt(key, stars);
-            PlayerPrefs.Save(); 
-        }
+        FirebaseFacade.SaveLevelStars(levelIndex, stars).Forget();
+
     }
 
-    public static int GetStars(int levelIndex)
+    public static async UniTask<int> GetStarsAsync(int levelIndex)
     {
-        string key = string.Format(StarsKey, levelIndex);
-        return PlayerPrefs.GetInt(key, 0); 
+        return await FirebaseFacade.GetLevelStars(levelIndex);
+   
     }
 }

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "593034394751",
+    "firebase_url": "https://pz-3-10fd7-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "pz-3-10fd7",
+    "storage_bucket": "pz-3-10fd7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593034394751:android:c3a60137926bae6010134a",
+        "android_client_info": {
+          "package_name": "com.pz3.unity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxfh1uyCaoevn3-9y0NUcUeziACyTSOoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
