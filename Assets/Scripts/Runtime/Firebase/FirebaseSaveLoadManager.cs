@@ -7,7 +7,6 @@ public class FirebaseSaveLoadManager
 {
     private const string LEVEL_STARS_COUNT_KEY = "LEVEL_{0}_STARS_COUNT";
 
-    private bool _levelDirty = false;
 
     private FirebaseBootstrap _firebase;
 
@@ -15,7 +14,7 @@ public class FirebaseSaveLoadManager
     {
         _firebase = bootstrap;
     }
-    public async UniTask SaveDataToFirebaseAsync(int levelNumber, Stars starsCount)
+    public async UniTask SaveLevelDataToFirebaseAsync(int levelNumber, Stars starsCount)
     {
         var db = FirebaseBootstrap.Db;
         var uid = FirebaseBootstrap.Uid;

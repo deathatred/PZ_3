@@ -11,6 +11,10 @@ public class LevelsMenuViewUI : MonoBehaviour
     {
         SubscribeToEvents();
     }
+    private void Start()
+    {
+        InitComponents();
+    }
     private void OnDisable()
     {
         UnsubscribeFromEvents();
