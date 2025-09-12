@@ -24,7 +24,7 @@ public static class FirebaseFacade
 
         _saveLoad = new FirebaseSaveLoadManager(_bootstrap);
         _initCompletion.TrySetResult();
-        _isInitialized = true;
+        _isInitialized = true;      
     }
     public static async UniTask EnsureInitialized()
     {

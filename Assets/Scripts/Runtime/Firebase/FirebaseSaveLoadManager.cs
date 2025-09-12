@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Firebase;
 using Firebase.Database;
+using System.Threading;
 using UnityEngine;
 
 public class FirebaseSaveLoadManager
@@ -14,21 +15,24 @@ public class FirebaseSaveLoadManager
     {
         _firebase = bootstrap;
     }
-    public async UniTask SaveLevelDataToFirebaseAsync(int levelNumber, Stars starsCount)
+    public async UniTask SaveLevelDataToFirebaseAsync(int levelNumber, Stars starsCount, 
+        CancellationTokenSource cts = default)
     {
         var db = FirebaseBootstrap.Db;
         var uid = FirebaseBootstrap.Uid;
 
         string key = string.Format(LEVEL_STARS_COUNT_KEY, levelNumber);
-        await db.Child($"users/{uid}/{key}").SetValueAsync((int)starsCount);
+        await db.Child($"users/{uid}/{key}").SetValueAsync((int)starsCount).
+            AsUniTask().AttachExternalCancellation(cts.Token);
     }
-    public async UniTask<int> LoadDataFromFromFirebaseAsync(int levelNumber)
+    public async UniTask<int> LoadDataFromFromFirebaseAsync(int levelNumber, CancellationTokenSource cts = default)
     {
         var db = FirebaseBootstrap.Db;
         var uid = FirebaseBootstrap.Uid;
 
         string key = string.Format(LEVEL_STARS_COUNT_KEY, levelNumber);
-        var snapshot = await db.Child($"users/{uid}/{key}").GetValueAsync();
+        var snapshot = await db.Child($"users/{uid}/{key}").GetValueAsync().
+            AsUniTask().AttachExternalCancellation(cts.Token);      
         if (snapshot.Exists && int.TryParse(snapshot.Value.ToString(), out int starsCount))
         {
             return starsCount; 
@@ -36,12 +40,12 @@ public class FirebaseSaveLoadManager
 
         return 0;
     }
-    public async UniTask ClearAllDataFromFirebaseAsync()
+    public async UniTask ClearAllDataFromFirebaseAsync(CancellationTokenSource cts = default)
     {
         var db = FirebaseBootstrap.Db;
         var uid = FirebaseBootstrap.Uid;
 
         var t = db.Child($"$users/{uid}").RemoveValueAsync();
-        await t.AsUniTask();
+        await t.AsUniTask().AttachExternalCancellation(cts.Token);
     }
 }
