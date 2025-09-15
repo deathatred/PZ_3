@@ -16,7 +16,7 @@ public class FirebaseSaveLoadManager
     {
         _firebase = bootstrap;
     }
-    public async UniTask SaveLevelDataToFirebaseAsync(int levelNumber, Stars starsCount, 
+    public async UniTask SaveLevelDataToFirebaseAsync(int levelNumber, Stars starsCount,
         CancellationTokenSource cts = default)
     {
         try
@@ -25,9 +25,17 @@ public class FirebaseSaveLoadManager
             var uid = FirebaseBootstrap.Uid;
 
             string key = string.Format(LEVEL_STARS_COUNT_KEY, levelNumber);
-            await db.Child($"users/{uid}/{key}").SetValueAsync((int)starsCount).
-                AsUniTask().AttachExternalCancellation(cts.Token);
-        }
+            if (cts != null)
+            {
+                await db.Child($"users/{uid}/{key}").SetValueAsync((int)starsCount).
+                    AsUniTask().AttachExternalCancellation(cts.Token);
+            }
+            else
+            {
+                await db.Child($"users/{uid}/{key}").SetValueAsync((int)starsCount).
+                    AsUniTask();
+            }
+            }
         catch (OperationCanceledException)
         {
             Debug.LogWarning("Saving data from FB canceled");
@@ -45,8 +53,17 @@ public class FirebaseSaveLoadManager
             var uid = FirebaseBootstrap.Uid;
 
             string key = string.Format(LEVEL_STARS_COUNT_KEY, levelNumber);
-            var snapshot = await db.Child($"users/{uid}/{key}").GetValueAsync().
-                AsUniTask().AttachExternalCancellation(cts.Token);
+            DataSnapshot snapshot = null;
+            if (cts != null)
+            {
+                snapshot = await db.Child($"users/{uid}/{key}").GetValueAsync().
+                   AsUniTask().AttachExternalCancellation(cts.Token);
+            }
+            else
+            {
+                snapshot = await db.Child($"users/{uid}/{key}").GetValueAsync().
+                  AsUniTask();
+            }
             if (snapshot.Exists && int.TryParse(snapshot.Value.ToString(), out int starsCount))
             {
                 return starsCount;
@@ -71,6 +88,13 @@ public class FirebaseSaveLoadManager
         var uid = FirebaseBootstrap.Uid;
 
         var t = db.Child($"$users/{uid}").RemoveValueAsync();
-        await t.AsUniTask().AttachExternalCancellation(cts.Token);
+        if (cts != null)
+        {
+            await t.AsUniTask().AttachExternalCancellation(cts.Token);
+        }
+        else
+        {
+            await t.AsUniTask();
+        }
+        }
     }
-}

@@ -27,8 +27,7 @@ public class FirebaseBootstrap
         }
 
         IsReady = false;
-        cts?.Cancel();
-        cts = new CancellationTokenSource();
+        
         try
         {
             var depTask = await FirebaseApp.CheckAndFixDependenciesAsync();
@@ -43,7 +42,14 @@ public class FirebaseBootstrap
             if (auth.CurrentUser == null)
             {
                 var signIn = auth.SignInAnonymouslyAsync();
-                await signIn.AsUniTask().AttachExternalCancellation(cts.Token);
+                if (cts != null)
+                {
+                    await signIn.AsUniTask().AttachExternalCancellation(cts.Token);
+                }
+                else
+                {
+                    await signIn.AsUniTask();
+                }
                 if (signIn.IsFaulted) return;
             }
             Uid = auth.CurrentUser.UserId;
