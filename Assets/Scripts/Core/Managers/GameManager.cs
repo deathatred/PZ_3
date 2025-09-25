@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [SerializeField] private List<Level> _levelsList;
     [Inject] private PlayerController _player;
     [Inject] private ILevelService _levelService;
     [Inject] private GameStateController _gameStateController;

@@ -15,9 +15,7 @@ public class GameContext : MonoInstaller
         Container.Bind<PlayerShooting>().FromInstance(_playerShooting).AsSingle().NonLazy();
         Container.Bind<ILevelService>().To<LevelService>().AsSingle().WithArguments(_levelsList, _playerController.transform);
         Container.Bind<GameStateController>().AsSingle();
-        Container.Bind<PlayerSpawnService>()
-            .AsSingle()
-            .WithArguments(_playerController.transform);
+        Container.Bind<PlayerSpawnService>().AsSingle().WithArguments(_playerController.transform);
         Container.Bind<StateFactory>().AsSingle();
     }
 }
