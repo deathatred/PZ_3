@@ -1,13 +1,17 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 public class GameStateController : IDisposable
 {
     public IGameState CurrentGameState { get; private set; }
-    private GameManager _gameManager;
-    public GameStateController(GameManager gameManager)
+    private StateFactory _stateFactory;
+    private ILevelService _levelService;
+    [Inject]
+    public GameStateController(StateFactory stateFactory, ILevelService levelService)
     {
-        _gameManager = gameManager;
+        _levelService = levelService;
+         _stateFactory = stateFactory; 
     }
     public void Init()
     {
@@ -38,14 +42,13 @@ public class GameStateController : IDisposable
     public void ChangeCurrentGameState(GameState newState)
     {
         CurrentGameState?.Exit();
-        CurrentGameState = StateFactory.Create(newState);
-        CurrentGameState.Enter(_gameManager);
+        CurrentGameState = _stateFactory.Create(newState);
+        CurrentGameState.Enter();
     }
     public void NextState()
     {
-        ILevelService levelService = _gameManager.GetCurrentLevelService();
-        levelService.ProgressLevel();
-        ChangeCurrentGameState(levelService.GetCurrentLevelFlowState());
+        _levelService.ProgressLevel();
+        ChangeCurrentGameState(_levelService.GetCurrentLevelFlowState());
     }
     public void Dispose()
     {

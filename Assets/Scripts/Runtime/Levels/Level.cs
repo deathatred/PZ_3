@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 public class Level : MonoBehaviour
 {
@@ -17,7 +18,8 @@ public class Level : MonoBehaviour
     [SerializeField] private Transform _chestPrefab;
     [SerializeField] private LevelFlowSO _levelFlowSO;
 
-    private Transform _player;
+    [Inject] private PlayerController _player;
+
     private List<Transform> _targets = new List<Transform>();
     private int _targetsAmount = 10;
     private CancellationTokenSource _targetCts = new CancellationTokenSource();
@@ -42,7 +44,8 @@ public class Level : MonoBehaviour
         List<Transform> spawnedTargets = new List<Transform>();
         if (last)
         {
-            Transform chest = SpawnChest(_targetSpawnPoints[index].transform, new Vector3(_player.position.x, spawnBasePos.y, _player.position.z));
+            Transform player = _player.transform;
+            Transform chest = SpawnChest(_targetSpawnPoints[index].transform, new Vector3(player.position.x, spawnBasePos.y, player.position.z));
             spawnedTargets.Add(chest);
             _targets.Add(chest);
             await AnimateTargetRiseAsync(chest, baseOffset, 0.3f, token);
@@ -56,9 +59,10 @@ public class Level : MonoBehaviour
             }
         }
         for (int i = 0; i < _targetsAmount; i++)
-        {
+        {  
             token.ThrowIfCancellationRequested();
             float yOffset = 1.5f;
+            Transform player = _player.transform;
             Vector3 spawnPos = new Vector3(spawnBasePos.x, spawnBasePos.y - yOffset, spawnBasePos.z);
             Transform target = Instantiate(_targetPrefab, spawnPos, Quaternion.identity);
             spawnedTargets.Add(target);
@@ -66,7 +70,7 @@ public class Level : MonoBehaviour
 
             AssignTargetColor(target, i);
 
-            Vector3 lookPos = new Vector3(_player.position.x, target.position.y, _player.position.z);
+            Vector3 lookPos = new Vector3(player.position.x, target.position.y, player.position.z);
             target.LookAt(lookPos);
 
             List<UniTask> riseTasks = new List<UniTask>();
@@ -206,10 +210,6 @@ public class Level : MonoBehaviour
     public void DestroyObstacles(int index)
     {
         _obstacleSets[index].gameObject.SetActive(false);
-    }
-    public void SetPlayer(Transform player)
-    {
-        _player = player;
     }
     public Transform GetMoveTarget(int index)
     {

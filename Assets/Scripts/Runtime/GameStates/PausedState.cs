@@ -4,13 +4,9 @@ using Debug = UnityEngine.Debug;
 
 public class PausedState : IGameState
 {
-    private GameManager _manager;
-    public void Enter(GameManager manager)
+    public void Enter()
     {
-        _manager = manager;
-
     }
-
     public void Exit()
     {
     }

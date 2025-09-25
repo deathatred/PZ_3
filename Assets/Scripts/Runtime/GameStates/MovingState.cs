@@ -1,18 +1,25 @@
 using System.Diagnostics;
 using UnityEngine;
+using Zenject;
 using Debug = UnityEngine.Debug;
 
 public class MovingState : IGameState
 {
-    private GameManager _manager;
-    public void Enter(GameManager manager)
+    private PlayerShooting _playerShooting;
+    private ILevelService _levelService;
+    [Inject]
+    public MovingState(PlayerShooting playerShooting, ILevelService levelService)
     {
-        _manager = manager;
-        ILevelService currentLevelService = manager.GetCurrentLevelService();
+        _playerShooting = playerShooting;
+        _levelService = levelService;
+    }
+    public void Enter()
+    {
+
         GameEventBus.SetNewMovingPoint(
-           currentLevelService.CurrentLevel.GetMoveTarget(currentLevelService.MovePointIndex)
+           _levelService.CurrentLevel.GetMoveTarget(_levelService.MovePointIndex)
        );
-        currentLevelService.AddMovePointIndex();
+        _levelService.AddMovePointIndex();
     }
 
     public void Exit()

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using Zenject;
 
 public class LevelService : ILevelService
 {
@@ -13,7 +14,8 @@ public class LevelService : ILevelService
     private Transform _player;
     private CancellationTokenSource _cts;
     private LevelFlowSO _currentLevelFlowSO;
-    private GameManager _gameManager;
+    private PlayerSpawnService _playerSpawnService;
+    //private GameManager _gameManager;
 
     public int MovePointIndex { get; private set; } = 0;
     public int TargetSpawnPointIndex { get; private set; } = 0;
@@ -23,10 +25,11 @@ public class LevelService : ILevelService
         private set { _currentLevelIndex = value; }
     }
     public Level CurrentLevel {get => _currentLevel; }
-    public LevelService(List<Level> levels,GameManager manager, Transform player)
+
+    public LevelService(List<Level> levels, PlayerSpawnService spawn, Transform player)
     {
         _player = player;
-        _gameManager = manager;
+        _playerSpawnService = spawn;
         _levelsList = levels;
     }
     public void Init()
@@ -72,7 +75,6 @@ public class LevelService : ILevelService
         _currentLevel = _levelsList[_currentLevelIndex];
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-        _currentLevel.SetPlayer(_player);
     }
 
     public async UniTask LoadLevelAsync(int index, CancellationToken token)
@@ -87,7 +89,7 @@ public class LevelService : ILevelService
 
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
 
-        _gameManager.GetPlayerSpawnService().ResetPlayerTransform();
+        _playerSpawnService.ResetPlayerTransform();
         SetCurrentLevel();
         ResetLevel();
         await UniTask.Delay(2000).AttachExternalCancellation(token);
@@ -122,7 +124,7 @@ public class LevelService : ILevelService
 
         _currentLevel = _levelsList[_currentLevelIndex];
         _currentLevelFlowSO = _currentLevel.GetLevelFlowSO();
-        _gameManager.GetPlayerSpawnService().ResetPlayerTransform();
+        _playerSpawnService.ResetPlayerTransform();
         _currentLevel.ResetLevel();
     }
 

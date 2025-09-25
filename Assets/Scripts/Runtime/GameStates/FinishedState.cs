@@ -1,15 +1,22 @@
 using Cysharp.Threading.Tasks;
 using System.Diagnostics;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using Debug = UnityEngine.Debug;
+using Zenject;
+
 
 public class FinishedState : IGameState
 {
-    private GameManager _manager;
-    public void Enter(GameManager manager)
+    private readonly PlayerShooting _playerShooting;
+    private readonly ILevelService _levelService;
+
+    [Inject]
+    public FinishedState(PlayerShooting playerShooting, ILevelService levelService)
     {
-        _manager = manager;
+        _playerShooting = playerShooting;
+        _levelService = levelService;
+    }
+    public void Enter()
+    {
         Stars stars = CountStars();
         FinishTheLevelAfterDelayAsync(stars).Forget();
     }
@@ -19,25 +26,23 @@ public class FinishedState : IGameState
     }
     private Stars CountStars()
     {
-        ILevelService levelService = _manager.GetCurrentLevelService();
-        InfoLevelSO levelInfo = levelService.CurrentLevel.GetLevelInfoSO();
-        var playerShooting = _manager.GetPlayer().GetComponent<PlayerShooting>();
-        int remaining = playerShooting.GetBullets();
+        InfoLevelSO levelInfo = _levelService.CurrentLevel.GetLevelInfoSO();
+        int remaining = _playerShooting.GetBullets();
         if (remaining >= levelInfo.BulletsForThreeStars)
         {
-            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, Stars.Three);
+            LevelsProgress.SaveStars(_levelService.CurrentLevelIndex, Stars.Three);
             levelInfo.StarsGained = (int)Stars.Three;
             return Stars.Three;      
         }
         else if (remaining >= levelInfo.BulletsForTwoStars)
         {
-            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, Stars.Two);
+            LevelsProgress.SaveStars(_levelService.CurrentLevelIndex, Stars.Two);
             levelInfo.StarsGained = (int)Stars.Two;
             return Stars.Two;
         }
         else
         {
-            LevelsProgress.SaveStars(levelService.CurrentLevelIndex, Stars.One);
+            LevelsProgress.SaveStars(_levelService.CurrentLevelIndex, Stars.One);
             levelInfo.StarsGained = (int)Stars.One;
             return Stars.One;
         }
@@ -45,7 +50,7 @@ public class FinishedState : IGameState
     private async UniTask FinishTheLevelAfterDelayAsync(Stars stars)
     {
         await UniTask.Delay(5000);
-      
+
         GameEventBus.LevelFinished(stars);
     }
 }

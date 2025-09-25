@@ -20,7 +20,7 @@ public class LevelsListScrollView : MonoBehaviour
             InfoLevelSO levelInfoSO = level.GetLevelInfoSO();
             LevelSingleCell levelSingleCell = 
                 GameObject.Instantiate(_levelSingleCellPrefab, _content.transform);
-            levelSingleCell.Init(levelInfoSO);
+            levelSingleCell.Init(levelInfoSO).Forget();
         }
     }
 }

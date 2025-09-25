@@ -1,16 +1,18 @@
 using UnityEngine;
+using Zenject;
 
 public class SpawningTargetsState : IGameState
 {
-    private GameManager _manager;
-    public void Enter(GameManager manager)
+    private ILevelService _levelService;
+    [Inject]
+    public SpawningTargetsState(ILevelService levelService)
     {
-        _manager = manager;
-        ILevelService leverServise = manager.GetCurrentLevelService();
-
-        GameEventBus.SpawnTargets(leverServise.TargetSpawnPointIndex, _manager.GetCurrentLevelService().IsTargetSpawnPointLast());
-        leverServise.AddTargetSpawnPointIndex();
-     
+        _levelService = levelService;
+    }
+    public void Enter()
+    {
+        GameEventBus.SpawnTargets(_levelService.TargetSpawnPointIndex, _levelService.IsTargetSpawnPointLast());
+        _levelService.AddTargetSpawnPointIndex();
     }
 
     public void Exit()

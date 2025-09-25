@@ -1,16 +1,21 @@
 using System.Diagnostics;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
+using Zenject;
 
 public class StartedState : IGameState
 {
-    private GameManager _manager;
-    public void Enter(GameManager manager)
+    private GameStateController _stateController;
+    private ILevelService _levelService;
+    [Inject]
+    public StartedState(GameStateController controller, ILevelService levelService)
     {
-        _manager = manager;
-        ILevelService levelService = manager.GetCurrentLevelService();
-        GameEventBus.LevelLoaded(levelService.CurrentLevel);
-        _manager.GetGameStateController().NextState();
+        _stateController = controller;
+        _levelService = levelService;
+    }
+    public void Enter()
+    {
+        GameEventBus.LevelLoaded(_levelService.CurrentLevel);
+        _stateController.NextState();
     }
 
     public void Exit()
